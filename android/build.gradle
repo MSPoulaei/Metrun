@@ -1,18 +1,19 @@
 buildscript {
-    ext.kotlin_version = '1.7.10'
+    ext.kotlin_version = '1.8.22'
     repositories {
-        google()
+        maven { url 'https://maven.aliyun.com/repository/google' }
         mavenCentral()
     }
 
     dependencies {
+        classpath 'com.android.tools.build:gradle:8.1.0'
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
     }
 }
 
 allprojects {
     repositories {
-        google()
+        maven { url 'https://maven.aliyun.com/repository/google' }
         mavenCentral()
     }
 }
