@@ -6,7 +6,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 /// Service to check for new app updates via remote config
 class UpdateCheckerService {
-  static const String currentVersion = '2.0.0';
+  static const String currentVersion = '2.1.0';
   static const Duration cooldownDuration = Duration(days: 3);
   static const String _fileName = 'update_state.json';
 
