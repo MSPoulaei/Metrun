@@ -29,7 +29,7 @@ jobs:
       - name: Set Up Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.16.9'
+          flutter-version: '3.27.3'
           channel: 'stable'
 
         #4 Install Dependencies
@@ -38,37 +38,39 @@ jobs:
 
         #5 Setup Android Signing Keystore & Secrets
       - name: Setup Signing Keystore
-        if: ${{ secrets.KEYSTORE_BASE64 != '' }}
         env:
           KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
           KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
           KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
           KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
-          python3 -c "import base64, os; open('android/upload-keystore.jks', 'wb').write(base64.b64decode(os.environ['KEYSTORE_BASE64']))"
-          cat <<EOF > android/key.properties
-          storePassword=${KEYSTORE_PASSWORD}
-          keyPassword=${KEY_PASSWORD}
-          keyAlias=${KEY_ALIAS}
-          storeFile=upload-keystore.jks
-          EOF
+          if [ -n "$KEYSTORE_BASE64" ]; then
+            python3 -c "import base64, os; open('android/upload-keystore.jks', 'wb').write(base64.b64decode(os.environ['KEYSTORE_BASE64']))"
+            cat <<EOF > android/key.properties
+            storePassword=${KEYSTORE_PASSWORD}
+            keyPassword=${KEY_PASSWORD}
+            keyAlias=${KEY_ALIAS}
+            storeFile=upload-keystore.jks
+            EOF
+          fi
 
         #5.1 Setup Ads Config from secret (keeps credentials private)
       - name: Setup Ads Config
-        if: ${{ secrets.ADS_JSON != '' }}
         env:
           ADS_JSON: ${{ secrets.ADS_JSON }}
         run: |
-          mkdir -p assets/config
-          echo "${ADS_JSON}" > assets/config/ads.json
+          if [ -n "$ADS_JSON" ]; then
+            mkdir -p assets/config
+            echo "${ADS_JSON}" > assets/config/ads.json
+          fi
 
         #6 Building APK
       - name: Build APK
-        run: flutter build apk --release --split-per-abi --no-shrink
+        run: flutter build apk --release --split-per-abi
 
         #7 Building App Bundle (aab)
       - name: Build appBundle
-        run: flutter build appbundle --no-shrink
+        run: flutter build appbundle --release
 
         #8 Build IPA ( IOS Build )
       - name: Build IPA
