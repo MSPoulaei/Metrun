@@ -38,6 +38,12 @@ class AdConfig {
   /// Set this in assets/config/ads.json or via remoteConfigUrl.
   static String? remoteConfigUrl;
 
+  /// Optional app version update metadata from remote config
+  static String? latestVersion;
+  static String? updateUrl;
+  static String? updateMessage;
+  static final ValueNotifier<String?> updateNotifier = ValueNotifier(null);
+
   /// Only Android and iOS are supported by the Adivery mobile SDK
   static bool get isSupported =>
       !kIsWeb &&
@@ -131,6 +137,18 @@ class AdConfig {
         }
         if (data.containsKey('native_enabled')) {
           nativeEnabled = data['native_enabled'] == true;
+        }
+        if (data['latest_version'] is String) {
+          latestVersion = data['latest_version'];
+        }
+        if (data['update_url'] is String) {
+          updateUrl = data['update_url'];
+        }
+        if (data['update_message'] is String) {
+          updateMessage = data['update_message'];
+        }
+        if (latestVersion != null) {
+          updateNotifier.value = latestVersion;
         }
         updateActiveFormat();
       }

@@ -27,6 +27,7 @@ dependencies:
   http: ^1.2.0
   collection: ^1.18.0
   adivery: ^4.9.0
+  url_launcher: ^6.3.0
 
 dependency_overrides:
   file: ^7.0.0

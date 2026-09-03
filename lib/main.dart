@@ -7,10 +7,15 @@ import 'package:masiryab_metro/online/line_mapper.dart';
 import 'package:masiryab_metro/online/models.dart';
 import 'package:masiryab_metro/online/timeutil.dart';
 import 'package:masiryab_metro/pair.dart';
+import 'package:masiryab_metro/favorites_service.dart';
+import 'package:masiryab_metro/persian_number_utility.dart';
+import 'package:masiryab_metro/rating_prompt_service.dart';
 import 'package:masiryab_metro/recent_trips_service.dart';
 import 'package:masiryab_metro/route_service.dart';
+import 'package:masiryab_metro/update_checker_service.dart';
 import 'package:masiryab_metro/widget/auto_complete.dart';
 import 'package:masiryab_metro/widget/banner_ad_widget.dart';
+import 'package:masiryab_metro/widget/favorites_bar.dart';
 import 'package:masiryab_metro/widget/native_ad_card.dart';
 import 'package:masiryab_metro/widget/recent_trips_bar.dart';
 
@@ -86,6 +91,8 @@ class _MyHomePageState extends State<MyHomePage> {
     final offlineReader = IstgahReader();
     final offline = await offlineReader.readStates();
     await RecentTripsService.loadTrips();
+    await FavoritesService.loadFavorites();
+    AdConfig.updateNotifier.addListener(_onRemoteUpdate);
     await _routeService.init();
     if (!mounted) return;
     setState(() {
@@ -110,6 +117,16 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void assign1(TextEditingController c) => mabda = c;
   void assign2(TextEditingController c) => maghsad = c;
+
+  void _onRemoteUpdate() {
+    if (!mounted) return;
+    UpdateCheckerService.checkAndPrompt(
+      context,
+      latestVersion: AdConfig.latestVersion,
+      updateUrl: AdConfig.updateUrl,
+      updateMessage: AdConfig.updateMessage,
+    );
+  }
 
   void _swapStations() {
     final temp = mabda.text;
@@ -173,6 +190,9 @@ class _MyHomePageState extends State<MyHomePage> {
 
     if (result.hasData) {
       RecentTripsService.addTrip(mabda.text, maghsad.text);
+      if (mounted) {
+        RatingPromptService.recordSearchAndCheck(context);
+      }
     }
 
     if (result.notice != null && result.fellBack) {
@@ -264,6 +284,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   void dispose() {
+    AdConfig.updateNotifier.removeListener(_onRemoteUpdate);
     _routeService.dispose();
     super.dispose();
   }
@@ -373,6 +394,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       ),
                     ),
                   ),
+                  FavoritesBar(onSelectTrip: _selectRecentTrip),
                   RecentTripsBar(onSelectTrip: _selectRecentTrip),
                   if (showOnlineControls) ...[
                     const SizedBox(height: 8),
@@ -613,17 +635,54 @@ class _MyHomePageState extends State<MyHomePage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.center,
                       children: [
-                        Text(
-                          route.title,
-                          textAlign: TextAlign.center,
-                          style: const TextStyle(
-                            color: Colors.white,
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                            shadows: [
-                              Shadow(blurRadius: 4, color: Colors.black54),
-                            ],
-                          ),
+                        Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Text(
+                              route.title,
+                              textAlign: TextAlign.center,
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                shadows: [
+                                  Shadow(blurRadius: 4, color: Colors.black54),
+                                ],
+                              ),
+                            ),
+                            const SizedBox(width: 4),
+                            ValueListenableBuilder<List<FavoriteTrip>>(
+                              valueListenable: FavoritesService.favoritesNotifier,
+                              builder: (context, _, __) {
+                                final isFav = FavoritesService.isFavorite(
+                                    mabda.text, maghsad.text);
+                                return IconButton(
+                                  icon: Icon(
+                                    isFav
+                                        ? Icons.star_rounded
+                                        : Icons.star_outline_rounded,
+                                    color: isFav ? Colors.amber : Colors.white,
+                                    size: 24,
+                                  ),
+                                  tooltip: isFav
+                                      ? 'حذف از برگزیده‌ها'
+                                      : 'افزودن به برگزیده‌ها',
+                                  onPressed: () {
+                                    FavoritesService.toggleFavorite(
+                                        mabda.text, maghsad.text);
+                                    ScaffoldMessenger.of(context).showSnackBar(
+                                      SnackBar(
+                                        content: Text(isFav
+                                            ? 'از مسیرهای برگزیده حذف شد'
+                                            : 'به مسیرهای برگزیده افزوده شد'),
+                                        duration: const Duration(seconds: 1),
+                                      ),
+                                    );
+                                  },
+                                );
+                              },
+                            ),
+                          ],
                         ),
                         const SizedBox(height: 4),
                         Wrap(
@@ -638,7 +697,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
                                   Text(
-                                    route.departTime!,
+                                    route.departTime!.toPersianDigits(),
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 15,
@@ -657,7 +716,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                     ),
                                   ),
                                   Text(
-                                    route.arriveTime!,
+                                    route.arriveTime!.toPersianDigits(),
                                     style: const TextStyle(
                                       color: Colors.white,
                                       fontSize: 15,
@@ -671,8 +730,9 @@ class _MyHomePageState extends State<MyHomePage> {
                               ),
                             ),
                             Text(
-                              '(${route.stationCount} ایستگاه'
-                              '${realLines.isEmpty ? '' : '، خطوط ${realLines.join('، ')}'})',
+                              ('(${route.stationCount} ایستگاه'
+                                      '${realLines.isEmpty ? '' : '، خطوط ${realLines.join('، ')}'})')
+                                  .toPersianDigits(),
                               style: const TextStyle(
                                 color: Colors.white,
                                 fontSize: 13,
@@ -769,14 +829,51 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             child: Directionality(
               textDirection: TextDirection.rtl,
-              child: Text(
-                text,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  color: Colors.white,
-                  fontSize: 20,
-                  fontWeight: FontWeight.bold,
-                ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Text(
+                    text.toPersianDigits(),
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(
+                      color: Colors.white,
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  ValueListenableBuilder<List<FavoriteTrip>>(
+                    valueListenable: FavoritesService.favoritesNotifier,
+                    builder: (context, _, __) {
+                      final isFav = FavoritesService.isFavorite(
+                          mabda.text, maghsad.text);
+                      return IconButton(
+                        icon: Icon(
+                          isFav
+                              ? Icons.star_rounded
+                              : Icons.star_outline_rounded,
+                          color: isFav ? Colors.amber : Colors.white,
+                          size: 26,
+                        ),
+                        tooltip: isFav
+                            ? 'حذف از مسیرهای برگزیده'
+                            : 'افزودن به مسیرهای برگزیده',
+                        onPressed: () {
+                          FavoritesService.toggleFavorite(
+                              mabda.text, maghsad.text);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(isFav
+                                  ? 'از مسیرهای برگزیده حذف شد'
+                                  : 'به مسیرهای برگزیده افزوده شد'),
+                              duration: const Duration(seconds: 1),
+                            ),
+                          );
+                        },
+                      );
+                    },
+                  ),
+                ],
               ),
             ),
           ),
