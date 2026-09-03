@@ -49,4 +49,6 @@ app.*.map.json
 
 # Ad Network Secret Credentials
 assets/config/ads.json
+gist_config.json
+assets/config/gist_config.json
 
