@@ -32,7 +32,7 @@ if (keystorePropertiesFile.exists()) {
 }
 
 android {
-    namespace 'com.mspco.metrun'
+    namespace 'com.fardissoft.metrun'
     compileSdkVersion 36
 
     compileOptions {
@@ -49,7 +49,7 @@ android {
     }
 
     defaultConfig {
-        applicationId "com.mspco.metrun"
+        applicationId "com.fardissoft.metrun"
         minSdkVersion flutter.minSdkVersion
         targetSdkVersion 34
         versionCode flutterVersionCode.toInteger()

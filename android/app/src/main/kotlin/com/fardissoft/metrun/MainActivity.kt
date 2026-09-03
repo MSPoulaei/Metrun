@@ -1,4 +1,4 @@
-package com.mspco.metrun
+package com.fardissoft.metrun
 
 import io.flutter.embedding.android.FlutterActivity
 

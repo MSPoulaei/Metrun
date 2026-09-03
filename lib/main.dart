@@ -18,6 +18,7 @@ import 'package:masiryab_metro/widget/banner_ad_widget.dart';
 import 'package:masiryab_metro/widget/favorites_bar.dart';
 import 'package:masiryab_metro/widget/native_ad_card.dart';
 import 'package:masiryab_metro/widget/recent_trips_bar.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 void main() {
   runApp(const MyApp());
@@ -207,11 +208,154 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  void _setMode(RouteMode mode) {
-    setState(() {
-      _routeService.mode = mode;
-      _result = null;
-    });
+  Future<void> _showAboutDialog() async {
+    final version = await UpdateCheckerService.getCurrentVersion();
+    if (!mounted) return;
+
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: Colors.transparent,
+      builder: (ctx) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: Container(
+            decoration: const BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
+            ),
+            padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Container(
+                  width: 40,
+                  height: 4,
+                  margin: const EdgeInsets.only(bottom: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey.shade300,
+                    borderRadius: BorderRadius.circular(2),
+                  ),
+                ),
+                Container(
+                  padding: const EdgeInsets.all(12),
+                  decoration: BoxDecoration(
+                    color: Colors.orange.shade50,
+                    shape: BoxShape.circle,
+                  ),
+                  child: Icon(
+                    Icons.directions_subway_rounded,
+                    size: 48,
+                    color: Colors.orange.shade700,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                const Text(
+                  'متران (Metrun)',
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 4),
+                Text(
+                  'نسخه ${version.toPersianDigits()}',
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                ),
+                const SizedBox(height: 8),
+                Text(
+                  'مسیریاب هوشمند و زمان‌بندی خطوط متروی تهران',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                ),
+                const Divider(height: 28),
+                // Developer & Company Info
+                Row(
+                  children: [
+                    Icon(Icons.person_rounded, size: 20, color: Colors.orange.shade700),
+                    const SizedBox(width: 8),
+                    const Text('توسعه‌دهنده: ', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    const Text('محمد صادق پولائی', style: TextStyle(fontSize: 13)),
+                  ],
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Icon(Icons.business_rounded, size: 20, color: Colors.orange.shade700),
+                    const SizedBox(width: 8),
+                    const Text('شرکت / تیم: ', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    const Text('فردیس سافت (FardisSoft)', style: TextStyle(fontSize: 13)),
+                  ],
+                ),
+                const SizedBox(height: 16),
+                // Telegram Account Link
+                SizedBox(
+                  width: double.infinity,
+                  child: OutlinedButton.icon(
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: const Color(0xFF229ED9),
+                      side: const BorderSide(color: Color(0xFF229ED9)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                    ),
+                    icon: const Icon(Icons.send_rounded, size: 18),
+                    label: const Text(
+                      'ارتباط در تلگرام (@MSPoulaei)',
+                      style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () async {
+                      final uri = Uri.parse('https://t.me/MSPoulaei');
+                      if (await canLaunchUrl(uri)) {
+                        await launchUrl(uri, mode: LaunchMode.externalApplication);
+                      }
+                    },
+                  ),
+                ),
+                const SizedBox(height: 14),
+                // Rating buttons
+                const Align(
+                  alignment: Alignment.centerRight,
+                  child: Text(
+                    'حمایت و ثبت نظر:',
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                  ),
+                ),
+                const SizedBox(height: 8),
+                Row(
+                  children: [
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF28A745),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                        ),
+                        icon: const Icon(Icons.star_rate_rounded, size: 18),
+                        label: const Text('کافه بازار', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                        onPressed: () => RatingPromptService.openCafeBazaar(context),
+                      ),
+                    ),
+                    const SizedBox(width: 10),
+                    Expanded(
+                      child: ElevatedButton.icon(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: const Color(0xFF1E88E5),
+                          foregroundColor: Colors.white,
+                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                          padding: const EdgeInsets.symmetric(vertical: 10),
+                        ),
+                        icon: const Icon(Icons.star_rate_rounded, size: 18),
+                        label: const Text('مایکت', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
+                        onPressed: () => RatingPromptService.openMyket(context),
+                      ),
+                    ),
+                  ],
+                ),
+                const SizedBox(height: 8),
+              ],
+            ),
+          ),
+        );
+      },
+    );
   }
 
   void _useNow() {
@@ -300,34 +444,10 @@ class _MyHomePageState extends State<MyHomePage> {
         title: Text(widget.title),
         backgroundColor: Colors.orange.shade600,
         actions: [
-          PopupMenuButton<RouteMode>(
-            tooltip: 'حالت مسیر',
-            icon: Icon(
-              _routeService.mode == RouteMode.offline
-                  ? Icons.cloud_off
-                  : _routeService.mode == RouteMode.online
-                      ? Icons.cloud_done
-                      : Icons.cloud_sync,
-              color: Colors.white,
-            ),
-            onSelected: _setMode,
-            itemBuilder: (context) => [
-              CheckedPopupMenuItem(
-                value: RouteMode.auto,
-                checked: _routeService.mode == RouteMode.auto,
-                child: const Text('خودکار (آنلاین در صورت امکان)'),
-              ),
-              CheckedPopupMenuItem(
-                value: RouteMode.online,
-                checked: _routeService.mode == RouteMode.online,
-                child: const Text('فقط آنلاین (رسمی)'),
-              ),
-              CheckedPopupMenuItem(
-                value: RouteMode.offline,
-                checked: _routeService.mode == RouteMode.offline,
-                child: const Text('فقط آفلاین (تقریبی)'),
-              ),
-            ],
+          IconButton(
+            onPressed: _showAboutDialog,
+            icon: const Icon(Icons.info_outline_rounded, color: Colors.white),
+            tooltip: 'درباره متران',
           ),
           IconButton(
             onPressed: _openMap,

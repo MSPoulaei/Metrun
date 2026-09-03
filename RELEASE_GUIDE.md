@@ -68,7 +68,7 @@ flutter build appbundle --release
   "native_enabled": true,
   "latest_version": "2.0.0",
   "min_version": "2.0.0",
-  "update_url": "https://cafebazaar.ir/app/com.mspco.metrun",
+  "update_url": "https://cafebazaar.ir/app/com.fardissoft.metrun",
   "update_message": "نسخه جدید متران با تغییرات و بهبود مسیرها منتشر شد. برای عملکرد بهتر لطفاً به‌روزرسانی کنید."
 }
 ```

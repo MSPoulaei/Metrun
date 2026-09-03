@@ -8,7 +8,7 @@ import 'package:url_launcher/url_launcher.dart';
 class RatingPromptService {
   static const int promptThreshold = 4;
   static const String _fileName = 'rating_state.json';
-  static const String packageName = 'com.mspco.metrun';
+  static const String packageName = 'com.fardissoft.metrun';
 
   static File? _cachedFile;
 
@@ -42,6 +42,48 @@ class RatingPromptService {
     } catch (_) {}
   }
 
+  /// Opens Cafe Bazaar app page (or web fallback) and marks has_rated = true
+  static Future<void> openCafeBazaar([BuildContext? context]) async {
+    try {
+      final file = await _getFile();
+      Map<String, dynamic> state = {};
+      if (await file.exists()) {
+        state = jsonDecode(await file.readAsString()) as Map<String, dynamic>;
+      }
+      state['has_rated'] = true;
+      await file.writeAsString(jsonEncode(state));
+    } catch (_) {}
+
+    final uri = Uri.parse('bazaar://details?id=$packageName');
+    final webUri = Uri.parse('https://cafebazaar.ir/app/$packageName');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      await launchUrl(webUri, mode: LaunchMode.externalApplication);
+    }
+  }
+
+  /// Opens Myket app page (or web fallback) and marks has_rated = true
+  static Future<void> openMyket([BuildContext? context]) async {
+    try {
+      final file = await _getFile();
+      Map<String, dynamic> state = {};
+      if (await file.exists()) {
+        state = jsonDecode(await file.readAsString()) as Map<String, dynamic>;
+      }
+      state['has_rated'] = true;
+      await file.writeAsString(jsonEncode(state));
+    } catch (_) {}
+
+    final uri = Uri.parse('myket://details?id=$packageName');
+    final webUri = Uri.parse('https://myket.ir/app/$packageName');
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri);
+    } else {
+      await launchUrl(webUri, mode: LaunchMode.externalApplication);
+    }
+  }
+
   static void _showRatingDialog(
       BuildContext context, File file, Map<String, dynamic> state) {
     showModalBottomSheet(
@@ -60,31 +102,31 @@ class RatingPromptService {
                 Container(
                   width: 40,
                   height: 4,
+                  margin: const EdgeInsets.only(bottom: 12),
                   decoration: BoxDecoration(
                     color: Colors.grey.shade300,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                const SizedBox(height: 16),
-                const Icon(Icons.stars_rounded, size: 48, color: Colors.amber),
-                const SizedBox(height: 10),
-                const Text(
-                  'از مسیریابی متران راضی هستید؟',
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold),
-                ),
+                Icon(Icons.star_rounded, color: Colors.amber.shade600, size: 48),
                 const SizedBox(height: 8),
+                const Text(
+                  'آیا از متران راضی هستید؟',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                const SizedBox(height: 6),
                 Text(
-                  'با ثبت نظر و امتیاز ۵ ستاره، به ما در به‌روزرسانی خطوط جدید و ایستگاه‌های مترو کمک کنید!',
+                  'نظر و امتیاز شما به توسعه و به‌روزرسانی مداوم خطوط و امکانات برنامه کمک می‌کند.',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                 ),
-                const SizedBox(height: 18),
+                const SizedBox(height: 16),
                 Row(
                   children: [
                     Expanded(
                       child: ElevatedButton.icon(
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.green.shade700,
+                          backgroundColor: Colors.orange.shade700,
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
@@ -93,17 +135,9 @@ class RatingPromptService {
                         ),
                         icon: const Icon(Icons.star, size: 18),
                         label: const Text('امتیاز در کافه بازار'),
-                        onPressed: () async {
+                        onPressed: () {
                           Navigator.pop(ctx);
-                          state['has_rated'] = true;
-                          await file.writeAsString(jsonEncode(state));
-                          final uri = Uri.parse('bazaar://details?id=$packageName');
-                          final webUri = Uri.parse('https://cafebazaar.ir/app/$packageName');
-                          if (await canLaunchUrl(uri)) {
-                            await launchUrl(uri);
-                          } else {
-                            await launchUrl(webUri, mode: LaunchMode.externalApplication);
-                          }
+                          openCafeBazaar(context);
                         },
                       ),
                     ),
@@ -117,17 +151,9 @@ class RatingPromptService {
                           ),
                         ),
                         child: const Text('امتیاز در مایکت'),
-                        onPressed: () async {
+                        onPressed: () {
                           Navigator.pop(ctx);
-                          state['has_rated'] = true;
-                          await file.writeAsString(jsonEncode(state));
-                          final uri = Uri.parse('myket://details?id=$packageName');
-                          final webUri = Uri.parse('https://myket.ir/app/$packageName');
-                          if (await canLaunchUrl(uri)) {
-                            await launchUrl(uri);
-                          } else {
-                            await launchUrl(webUri, mode: LaunchMode.externalApplication);
-                          }
+                          openMyket(context);
                         },
                       ),
                     ),

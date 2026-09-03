@@ -172,7 +172,7 @@ class UpdateCheckerService {
                   onPressed: () async {
                     if (!isForce) Navigator.pop(ctx);
                     final url = updateUrl ??
-                        'https://cafebazaar.ir/app/com.mspco.metrun';
+                        'https://cafebazaar.ir/app/com.fardissoft.metrun';
                     final uri = Uri.parse(url);
                     if (await canLaunchUrl(uri)) {
                       await launchUrl(uri, mode: LaunchMode.externalApplication);
