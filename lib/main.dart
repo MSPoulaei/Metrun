@@ -123,6 +123,7 @@ class _MyHomePageState extends State<MyHomePage> {
     UpdateCheckerService.checkAndPrompt(
       context,
       latestVersion: AdConfig.latestVersion,
+      minVersion: AdConfig.minVersion,
       updateUrl: AdConfig.updateUrl,
       updateMessage: AdConfig.updateMessage,
     );

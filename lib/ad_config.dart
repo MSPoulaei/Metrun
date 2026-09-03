@@ -40,6 +40,7 @@ class AdConfig {
 
   /// Optional app version update metadata from remote config
   static String? latestVersion;
+  static String? minVersion;
   static String? updateUrl;
   static String? updateMessage;
   static final ValueNotifier<String?> updateNotifier = ValueNotifier(null);
@@ -140,6 +141,9 @@ class AdConfig {
         }
         if (data['latest_version'] is String) {
           latestVersion = data['latest_version'];
+        }
+        if (data['min_version'] is String) {
+          minVersion = data['min_version'];
         }
         if (data['update_url'] is String) {
           updateUrl = data['update_url'];
