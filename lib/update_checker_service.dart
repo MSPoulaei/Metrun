@@ -178,7 +178,7 @@ class UpdateCheckerService {
                       await launchUrl(uri, mode: LaunchMode.externalApplication);
                     }
                   },
-                  child: const Text('به‌روزرسانی اکنون'),
+                  child: const Text('به‌روزرسانی'),
                 ),
               ],
             ),
