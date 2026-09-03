@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
-import 'package:masiryab_metro/IstgahReader.dart';
+import 'package:adivery/adivery.dart';
+import 'package:masiryab_metro/ad_config.dart';
+import 'package:masiryab_metro/istgah_reader.dart';
 import 'package:masiryab_metro/masiryab.dart';
 import 'package:masiryab_metro/online/line_mapper.dart';
 import 'package:masiryab_metro/online/models.dart';
 import 'package:masiryab_metro/online/timeutil.dart';
 import 'package:masiryab_metro/pair.dart';
 import 'package:masiryab_metro/route_service.dart';
-import 'package:masiryab_metro/widget/AutoComplete.dart';
+import 'package:masiryab_metro/widget/auto_complete.dart';
+import 'package:masiryab_metro/widget/banner_ad_widget.dart';
+import 'package:masiryab_metro/widget/native_ad_card.dart';
 
 void main() {
   runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -29,7 +33,7 @@ class MyApp extends StatelessWidget {
 }
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key, required this.title}) : super(key: key);
+  const MyHomePage({super.key, required this.title});
 
   final String title;
 
@@ -72,6 +76,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _bootstrap() async {
+    await AdConfig.init();
+    if (AdConfig.isSupported && AdConfig.appKey.isNotEmpty) {
+      AdiveryPlugin.initialize(AdConfig.appKey);
+      AdConfig.fetchRemoteConfig();
+    }
     final offlineReader = IstgahReader();
     final offline = await offlineReader.ReadStates();
     await _routeService.init();
@@ -119,6 +128,7 @@ class _MyHomePageState extends State<MyHomePage> {
       return;
     }
 
+    AdConfig.updateActiveFormat();
     setState(() {
       _loading = true;
       _result = null;
@@ -413,6 +423,19 @@ class _MyHomePageState extends State<MyHomePage> {
                     ),
                   const SizedBox(height: 8),
                   Expanded(child: _buildResultBody()),
+                  ValueListenableBuilder<AdFormat>(
+                    valueListenable: AdConfig.formatNotifier,
+                    builder: (context, format, _) {
+                      switch (format) {
+                        case AdFormat.native:
+                          return const NativeAdCard();
+                        case AdFormat.banner:
+                          return const AdiveryBannerWidget();
+                        case AdFormat.none:
+                          return const SizedBox.shrink();
+                      }
+                    },
+                  ),
                 ],
               ),
             ),
@@ -454,6 +477,17 @@ class _MyHomePageState extends State<MyHomePage> {
     return const SizedBox.shrink();
   }
 
+  List<Color> _buildGradientColors(List<int> lines) {
+    if (lines.isEmpty) {
+      return const [Colors.orange, Colors.orange];
+    }
+    final colors = lines.map(getColorByKhat).toList();
+    if (colors.length == 1) {
+      return [colors.first, colors.first];
+    }
+    return colors;
+  }
+
   Widget _buildOnlineResults(RouteResult result) {
     final routes = result.onlineRoutes!;
     return ListView.builder(
@@ -478,29 +512,87 @@ class _MyHomePageState extends State<MyHomePage> {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(5),
                     gradient: LinearGradient(
-                      colors: realLines.isEmpty
-                          ? [Colors.orange]
-                          : realLines.map(getColorByKhat).toList(),
+                      colors: _buildGradientColors(realLines),
                       begin: Alignment.centerRight,
                       end: Alignment.centerLeft,
                     ),
                   ),
                   child: Directionality(
                     textDirection: TextDirection.rtl,
-                    child: Text(
-                      '${route.title}\n'
-                      '${route.departTime} → ${route.arriveTime}  '
-                      '(${route.stationCount} ایستگاه'
-                      '${realLines.isEmpty ? '' : '، خطوط ${realLines.join('، ')}'})',
-                      textAlign: TextAlign.center,
-                      style: const TextStyle(
-                        color: Colors.white,
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        shadows: [
-                          Shadow(blurRadius: 4, color: Colors.black54),
-                        ],
-                      ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        Text(
+                          route.title,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(blurRadius: 4, color: Colors.black54),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(height: 4),
+                        Wrap(
+                          alignment: WrapAlignment.center,
+                          crossAxisAlignment: WrapCrossAlignment.center,
+                          spacing: 8,
+                          runSpacing: 4,
+                          children: [
+                            Directionality(
+                              textDirection: TextDirection.ltr,
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    route.departTime!,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      shadows: [
+                                        Shadow(blurRadius: 4, color: Colors.black54),
+                                      ],
+                                    ),
+                                  ),
+                                  const Padding(
+                                    padding: EdgeInsets.symmetric(horizontal: 4),
+                                    child: Icon(
+                                      Icons.arrow_forward,
+                                      color: Colors.white,
+                                      size: 16,
+                                    ),
+                                  ),
+                                  Text(
+                                    route.arriveTime!,
+                                    style: const TextStyle(
+                                      color: Colors.white,
+                                      fontSize: 15,
+                                      fontWeight: FontWeight.bold,
+                                      shadows: [
+                                        Shadow(blurRadius: 4, color: Colors.black54),
+                                      ],
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Text(
+                              '(${route.stationCount} ایستگاه'
+                              '${realLines.isEmpty ? '' : '، خطوط ${realLines.join('، ')}'})',
+                              style: const TextStyle(
+                                color: Colors.white,
+                                fontSize: 13,
+                                shadows: [
+                                  Shadow(blurRadius: 4, color: Colors.black54),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
                     ),
                   ),
                 ),
@@ -579,7 +671,7 @@ class _MyHomePageState extends State<MyHomePage> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(5),
               gradient: LinearGradient(
-                colors: khats.map(getColorByKhat).toList(),
+                colors: _buildGradientColors(khats),
                 begin: Alignment.centerRight,
                 end: Alignment.centerLeft,
               ),

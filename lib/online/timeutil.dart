@@ -1,4 +1,5 @@
 /// Tehran local time helpers and metro day-type mapping.
+library;
 
 const int daySatToWed = 1; // شنبه تا چهارشنبه
 const int dayThursday = 2; // پنجشنبه

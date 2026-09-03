@@ -1,4 +1,4 @@
-import 'IstgahReader.dart';
+import 'istgah_reader.dart';
 import 'masiryab.dart';
 import 'online/client.dart';
 import 'online/matching.dart';

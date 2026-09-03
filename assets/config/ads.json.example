@@ -1,0 +1,6 @@
+{
+  "app_key": "YOUR_ADIVERY_APP_KEY",
+  "native_placement_id": "YOUR_NATIVE_PLACEMENT_ID",
+  "banner_placement_id": "YOUR_BANNER_PLACEMENT_ID",
+  "remote_config_url": "https://gist.githubusercontent.com/.../raw/metrun_ads.json"
+}

@@ -1,15 +1,15 @@
 import 'dart:collection';
 
-import 'IstgahReader.dart';
+import 'istgah_reader.dart';
 import 'pair.dart';
 import 'stack.dart';
 import 'package:collection/collection.dart';
 
 class Dijkstra {
-  SplayTreeMap<String, Node>? nodes_save = null;
+  SplayTreeMap<String, Node>? nodes_save;
   Future init() async {
     IstgahReader istgahReader = IstgahReader();
-    return nodes_save = await istgahReader.ReadFile();
+    return nodes_save = await istgahReader.readFile();
   }
 
   int getIntersectKhat(Node node1, Node node2) {
@@ -100,7 +100,7 @@ class Node {
   List<int> index;
   List<Edge> edges = <Edge>[];
   int distance_from_source = 0x7fffffff; //infinity
-  Node? previous = null;
+  Node? previous;
   bool get isTavizKhat => khat.length > 1;
   Node({required this.name, required this.khat,required this.index});
   Node.from(

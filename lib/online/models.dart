@@ -1,4 +1,5 @@
 /// Models for the official metro.tehran.ir scheduler (ported from Python).
+library;
 
 class Station {
   final int id;

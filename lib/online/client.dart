@@ -50,7 +50,7 @@ final RegExp _optionRe = RegExp(r'<option value="(\d+)">([^<]+)</option>');
 class MetroClient {
   final String pageUrl;
   final Duration timeout;
-  Catalog? _catalog;
+  final Catalog? _catalog;
   List<Station>? _stations;
   final http.Client _http;
   String? _cookieHeader;

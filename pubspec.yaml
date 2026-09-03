@@ -26,6 +26,7 @@ dependencies:
   path_provider: ^2.1.0
   http: ^1.2.0
   collection: ^1.18.0
+  adivery: ^4.9.0
 
 dependency_overrides:
   file: ^7.0.0
@@ -50,6 +51,7 @@ flutter:
   assets:
     - assets/images/
     - assets/data/
+    - assets/config/
   #   - images/a_dot_ham.jpeg
 
   # An image asset can refer to one or more resolution-specific "variants", see
