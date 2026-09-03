@@ -1,12 +1,26 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/material.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 /// Service to check for new app updates via remote config
 class UpdateCheckerService {
-  static const String currentVersion = '2.1.0';
+  static String? _cachedCurrentVersion;
+
+  /// Dynamically gets the current app version from pubspec.yaml via platform metadata
+  static Future<String> getCurrentVersion() async {
+    if (_cachedCurrentVersion != null) return _cachedCurrentVersion!;
+    try {
+      final info = await PackageInfo.fromPlatform();
+      _cachedCurrentVersion = info.version;
+      return info.version;
+    } catch (_) {
+      return '2.1.0'; // Fallback for headless tests
+    }
+  }
+
   static const Duration cooldownDuration = Duration(days: 3);
   static const String _fileName = 'update_state.json';
 
@@ -49,6 +63,8 @@ class UpdateCheckerService {
     String? updateMessage,
   }) async {
     if (latestVersion == null || latestVersion.isEmpty) return;
+
+    final currentVersion = await getCurrentVersion();
 
     // Check if current version is below minimum required version (Forced update)
     final bool isForce = minVersion != null &&

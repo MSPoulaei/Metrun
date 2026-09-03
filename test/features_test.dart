@@ -17,6 +17,7 @@ void main() {
   group('UpdateCheckerService', () {
     test('Detects newer semver versions correctly', () {
       expect(UpdateCheckerService.isNewerVersion('2.1.0', '2.0.0'), isTrue);
+      expect(UpdateCheckerService.isNewerVersion('2.10.0', '2.9.0'), isTrue);
       expect(UpdateCheckerService.isNewerVersion('2.0.1', '2.0.0'), isTrue);
       expect(UpdateCheckerService.isNewerVersion('3.0.0', '2.5.0'), isTrue);
       expect(UpdateCheckerService.isNewerVersion('2.0.0', '2.0.0'), isFalse);
