@@ -5,6 +5,7 @@ class AutocompleteBasic extends StatelessWidget {
   final VoidCallback select;
   final String label;
   final Set<String> options;
+  final Widget? prefixIcon;
 
   const AutocompleteBasic({
     super.key,
@@ -13,6 +14,7 @@ class AutocompleteBasic extends StatelessWidget {
     String? label,
     String? lable,
     required this.select,
+    this.prefixIcon,
   }) : label = label ?? (lable ?? '');
 
   @override
@@ -28,10 +30,33 @@ class AutocompleteBasic extends StatelessWidget {
             textDirection: TextDirection.rtl,
             decoration: InputDecoration(
               labelText: label,
-              hintTextDirection: TextDirection.rtl,
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: textEditingController.clear,
+              prefixIcon: prefixIcon,
+              contentPadding:
+                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: Colors.grey.shade300),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(10),
+                borderSide: BorderSide(color: Colors.orange.shade700, width: 1.5),
+              ),
+              suffixIcon: ValueListenableBuilder<TextEditingValue>(
+                valueListenable: textEditingController,
+                builder: (context, value, _) {
+                  if (value.text.isEmpty) {
+                    return const SizedBox.shrink();
+                  }
+                  return IconButton(
+                    icon: const Icon(Icons.clear, size: 20),
+                    tooltip: 'پاک کردن',
+                    onPressed: textEditingController.clear,
+                  );
+                },
               ),
             ),
             controller: textEditingController,

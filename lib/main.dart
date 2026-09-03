@@ -7,10 +7,12 @@ import 'package:masiryab_metro/online/line_mapper.dart';
 import 'package:masiryab_metro/online/models.dart';
 import 'package:masiryab_metro/online/timeutil.dart';
 import 'package:masiryab_metro/pair.dart';
+import 'package:masiryab_metro/recent_trips_service.dart';
 import 'package:masiryab_metro/route_service.dart';
 import 'package:masiryab_metro/widget/auto_complete.dart';
 import 'package:masiryab_metro/widget/banner_ad_widget.dart';
 import 'package:masiryab_metro/widget/native_ad_card.dart';
+import 'package:masiryab_metro/widget/recent_trips_bar.dart';
 
 void main() {
   runApp(const MyApp());
@@ -83,6 +85,7 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     final offlineReader = IstgahReader();
     final offline = await offlineReader.readStates();
+    await RecentTripsService.loadTrips();
     await _routeService.init();
     if (!mounted) return;
     setState(() {
@@ -107,6 +110,25 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void assign1(TextEditingController c) => mabda = c;
   void assign2(TextEditingController c) => maghsad = c;
+
+  void _swapStations() {
+    final temp = mabda.text;
+    mabda.text = maghsad.text;
+    maghsad.text = temp;
+    if (mabda.text.isNotEmpty && maghsad.text.isNotEmpty) {
+      selected1 = true;
+      selected2 = true;
+      getPath();
+    }
+  }
+
+  void _selectRecentTrip(String from, String to) {
+    mabda.text = from;
+    maghsad.text = to;
+    selected1 = true;
+    selected2 = true;
+    getPath();
+  }
 
   void select1() {
     setState(() => selected1 = true);
@@ -148,6 +170,10 @@ class _MyHomePageState extends State<MyHomePage> {
       _result = result;
       _loading = false;
     });
+
+    if (result.hasData) {
+      RecentTripsService.addTrip(mabda.text, maghsad.text);
+    }
 
     if (result.notice != null && result.fellBack) {
       ScaffoldMessenger.of(context).showSnackBar(
@@ -295,18 +321,59 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  AutocompleteBasic(
-                    options: _activeOptions,
-                    assign: assign1,
-                    lable: 'مبدا',
-                    select: select1,
+                  Card(
+                    elevation: 2,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Column(
+                              children: [
+                                AutocompleteBasic(
+                                  options: _activeOptions,
+                                  assign: assign1,
+                                  label: 'ایستگاه مبدا',
+                                  prefixIcon: Icon(
+                                    Icons.circle,
+                                    size: 14,
+                                    color: Colors.green.shade600,
+                                  ),
+                                  select: select1,
+                                ),
+                                const SizedBox(height: 8),
+                                AutocompleteBasic(
+                                  options: _activeOptions,
+                                  assign: assign2,
+                                  label: 'ایستگاه مقصد',
+                                  prefixIcon: Icon(
+                                    Icons.location_on,
+                                    size: 18,
+                                    color: Colors.red.shade600,
+                                  ),
+                                  select: select2,
+                                ),
+                              ],
+                            ),
+                          ),
+                          const SizedBox(width: 4),
+                          IconButton(
+                            icon: Icon(
+                              Icons.swap_vert_rounded,
+                              size: 28,
+                              color: Colors.orange.shade800,
+                            ),
+                            tooltip: 'جابجایی مبدا و مقصد',
+                            onPressed: _swapStations,
+                          ),
+                        ],
+                      ),
+                    ),
                   ),
-                  AutocompleteBasic(
-                    options: _activeOptions,
-                    assign: assign2,
-                    lable: 'مقصد',
-                    select: select2,
-                  ),
+                  RecentTripsBar(onSelectTrip: _selectRecentTrip),
                   if (showOnlineControls) ...[
                     const SizedBox(height: 8),
                     Directionality(
@@ -448,10 +515,34 @@ class _MyHomePageState extends State<MyHomePage> {
     }
     final result = _result;
     if (result == null) {
-      return const Center(
+      return Center(
         child: Directionality(
           textDirection: TextDirection.rtl,
-          child: Text('مبدا و مقصد را انتخاب کنید'),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Icon(
+                Icons.directions_subway_rounded,
+                size: 64,
+                color: Colors.orange.shade300,
+              ),
+              const SizedBox(height: 12),
+              Text(
+                'مبدا و مقصد را انتخاب کنید',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.grey.shade700,
+                ),
+              ),
+              const SizedBox(height: 6),
+              Text(
+                'می‌توانید نام ایستگاه را جستجو کرده یا از مسیرهای اخیر انتخاب کنید',
+                style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
+                textAlign: TextAlign.center,
+              ),
+            ],
+          ),
         ),
       );
     }
