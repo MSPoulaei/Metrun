@@ -280,7 +280,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   children: [
                     Icon(Icons.business_rounded, size: 20, color: Colors.orange.shade700),
                     const SizedBox(width: 8),
-                    const Text('شرکت / تیم: ', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
+                    const Text('شرکت: ', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
                     const Text('فردیس سافت (FardisSoft)', style: TextStyle(fontSize: 13)),
                   ],
                 ),
@@ -366,6 +366,25 @@ class _MyHomePageState extends State<MyHomePage> {
       _hour = clamped[0];
       _minute = clamped[1];
     });
+  }
+
+  Future<void> _pickTime() async {
+    final picked = await showTimePicker(
+      context: context,
+      initialTime: TimeOfDay(hour: _hour, minute: _minute),
+      builder: (context, child) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: child ?? const SizedBox.shrink(),
+        );
+      },
+    );
+    if (picked != null) {
+      setState(() {
+        _hour = picked.hour;
+        _minute = picked.minute;
+      });
+    }
   }
 
   Color getColorByKhat(int khat) {
@@ -518,81 +537,144 @@ class _MyHomePageState extends State<MyHomePage> {
                   FavoritesBar(onSelectTrip: _selectRecentTrip),
                   RecentTripsBar(onSelectTrip: _selectRecentTrip),
                   if (showOnlineControls) ...[
-                    const SizedBox(height: 8),
+                    const SizedBox(height: 6),
                     Directionality(
                       textDirection: TextDirection.rtl,
-                      child: Wrap(
-                        spacing: 8,
-                        runSpacing: 4,
-                        crossAxisAlignment: WrapCrossAlignment.center,
-                        children: [
-                          DropdownButton<int>(
-                            value: dayLabels.containsKey(_dayType)
-                                ? _dayType
-                                : dayLabels.keys.first,
-                            items: dayLabels.entries
-                                .map(
-                                  (e) => DropdownMenuItem(
-                                    value: e.key,
-                                    child: Text(e.value, style: const TextStyle(fontSize: 13)),
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(12),
+                          border: Border.all(color: Colors.grey.shade200),
+                          boxShadow: const [
+                            BoxShadow(
+                              color: Color(0x08000000),
+                              blurRadius: 4,
+                              offset: Offset(0, 1),
+                            ),
+                          ],
+                        ),
+                        child: Column(
+                          children: [
+                            Row(
+                              children: [
+                                // Day Type Dropdown
+                                Container(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey.shade50,
+                                    borderRadius: BorderRadius.circular(8),
+                                    border: Border.all(color: Colors.grey.shade300),
                                   ),
-                                )
-                                .toList(),
-                            onChanged: (v) {
-                              if (v != null) setState(() => _dayType = v);
-                            },
-                          ),
-                          DropdownButton<int>(
-                            value: _minute.clamp(0, 59),
-                            items: List.generate(60, (i) => i)
-                                .map(
-                                  (m) => DropdownMenuItem(
-                                    value: m,
-                                    child: Text('$m'.padLeft(2, '0')),
+                                  child: DropdownButtonHideUnderline(
+                                    child: DropdownButton<int>(
+                                      value: dayLabels.containsKey(_dayType)
+                                          ? _dayType
+                                          : dayLabels.keys.first,
+                                      isDense: true,
+                                      icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 18),
+                                      items: dayLabels.entries
+                                          .map(
+                                            (e) => DropdownMenuItem(
+                                              value: e.key,
+                                              child: Text(e.value,
+                                                  style: const TextStyle(fontSize: 12)),
+                                            ),
+                                          )
+                                          .toList(),
+                                      onChanged: (v) {
+                                        if (v != null) setState(() => _dayType = v);
+                                      },
+                                    ),
                                   ),
-                                )
-                                .toList(),
-                            onChanged: (v) {
-                              if (v != null) setState(() => _minute = v);
-                            },
-                          ),
-                          const Text(':'),
-                          DropdownButton<int>(
-                            value: _hour,
-                            items: List.generate(20, (i) => i + 4)
-                                .map(
-                                  (h) => DropdownMenuItem(
-                                    value: h,
-                                    child: Text('$h'.padLeft(2, '0')),
+                                ),
+                                const Spacer(),
+                                // Time Picker Button
+                                InkWell(
+                                  onTap: _pickTime,
+                                  borderRadius: BorderRadius.circular(8),
+                                  child: Container(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 10, vertical: 5),
+                                    decoration: BoxDecoration(
+                                      color: Colors.orange.shade50,
+                                      borderRadius: BorderRadius.circular(8),
+                                      border: Border.all(color: Colors.orange.shade300),
+                                    ),
+                                    child: Row(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Icon(Icons.access_time_filled_rounded,
+                                            size: 16, color: Colors.orange.shade800),
+                                        const SizedBox(width: 6),
+                                        Text(
+                                          '${_hour.toString().padLeft(2, '0')}:${_minute.toString().padLeft(2, '0')}'
+                                              .toPersianDigits(),
+                                          style: TextStyle(
+                                            fontSize: 13,
+                                            fontWeight: FontWeight.bold,
+                                            color: Colors.orange.shade900,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
                                   ),
-                                )
-                                .toList(),
-                            onChanged: (v) {
-                              if (v != null) setState(() => _hour = v);
-                            },
-                          ),
-                          ChoiceChip(
-                            label: const Text('حرکت از مبدا'),
-                            selected: _scheduleType == RouteQuery.scheduleDepart,
-                            onSelected: (_) {
-                              setState(
-                                  () => _scheduleType = RouteQuery.scheduleDepart);
-                            },
-                          ),
-                          ChoiceChip(
-                            label: const Text('رسیدن به مقصد'),
-                            selected: _scheduleType == RouteQuery.scheduleArrive,
-                            onSelected: (_) {
-                              setState(
-                                  () => _scheduleType = RouteQuery.scheduleArrive);
-                            },
-                          ),
-                          TextButton.icon(
-                            onPressed: _useNow,
-                            icon: const Icon(Icons.access_time, size: 18),
-                            label: const Text('الان'),
-                          ),
-                        ],
+                                ),
+                                const SizedBox(width: 6),
+                                // "الان" quick button
+                                TextButton.icon(
+                                  style: TextButton.styleFrom(
+                                    padding: const EdgeInsets.symmetric(
+                                        horizontal: 8, vertical: 4),
+                                    minimumSize: Size.zero,
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                    foregroundColor: Colors.orange.shade800,
+                                  ),
+                                  onPressed: _useNow,
+                                  icon: const Icon(Icons.replay_rounded, size: 14),
+                                  label: const Text('الان',
+                                      style: TextStyle(
+                                          fontSize: 12, fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ),
+                            const SizedBox(height: 8),
+                            // Departure vs Arrival Segmented Button
+                            SizedBox(
+                              width: double.infinity,
+                              child: SegmentedButton<int>(
+                                segments: const [
+                                  ButtonSegment<int>(
+                                    value: RouteQuery.scheduleDepart,
+                                    label: Text('زمان حرکت',
+                                        style: TextStyle(fontSize: 12)),
+                                    icon: Icon(Icons.directions_walk_rounded, size: 16),
+                                    tooltip: 'ساعت حرکت از ایستگاه مبدا',
+                                  ),
+                                  ButtonSegment<int>(
+                                    value: RouteQuery.scheduleArrive,
+                                    label: Text('زمان رسیدن',
+                                        style: TextStyle(fontSize: 12)),
+                                    icon: Icon(Icons.flag_rounded, size: 16),
+                                    tooltip: 'رسیدن به ایستگاه مقصد قبل از این ساعت',
+                                  ),
+                                ],
+                                selected: {_scheduleType},
+                                onSelectionChanged: (newSelection) {
+                                  setState(() => _scheduleType = newSelection.first);
+                                },
+                                style: ButtonStyle(
+                                  visualDensity: VisualDensity.compact,
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  shape: WidgetStateProperty.all(
+                                    RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(8)),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
                   ],
