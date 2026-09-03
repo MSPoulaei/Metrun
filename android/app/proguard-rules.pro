@@ -8,10 +8,14 @@
 
 # Adivery ProGuard Rules
 -keep class com.adivery.** { *; }
--keepinterface com.adivery.** { *; }
+-keep interface com.adivery.** { *; }
 -dontwarn com.adivery.**
 
 # Serialization and Reflection
 -keepattributes *Annotation*
 -keepattributes Signature
 -keepattributes SourceFile,LineNumberTable
+
+# Google Play Core Deferred Components
+-dontwarn com.google.android.play.core.**
+
