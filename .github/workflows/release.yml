@@ -46,12 +46,7 @@ jobs:
         run: |
           if [ -n "$KEYSTORE_BASE64" ]; then
             python3 -c "import base64, os; open('android/upload-keystore.jks', 'wb').write(base64.b64decode(os.environ['KEYSTORE_BASE64']))"
-            cat <<EOF > android/key.properties
-            storePassword=${KEYSTORE_PASSWORD}
-            keyPassword=${KEY_PASSWORD}
-            keyAlias=${KEY_ALIAS}
-            storeFile=upload-keystore.jks
-            EOF
+            printf "storePassword=%s\nkeyPassword=%s\nkeyAlias=%s\nstoreFile=upload-keystore.jks\n" "$KEYSTORE_PASSWORD" "$KEY_PASSWORD" "$KEY_ALIAS" > android/key.properties
           fi
 
         #5.1 Setup Ads Config from secret (keeps credentials private)
@@ -61,7 +56,7 @@ jobs:
         run: |
           if [ -n "$ADS_JSON" ]; then
             mkdir -p assets/config
-            echo "${ADS_JSON}" > assets/config/ads.json
+            python3 -c "import os; open('assets/config/ads.json', 'w').write(os.environ['ADS_JSON'])"
           fi
 
         #6 Building APK
