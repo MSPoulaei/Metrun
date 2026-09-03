@@ -82,7 +82,7 @@ class _MyHomePageState extends State<MyHomePage> {
       AdConfig.fetchRemoteConfig();
     }
     final offlineReader = IstgahReader();
-    final offline = await offlineReader.ReadStates();
+    final offline = await offlineReader.readStates();
     await _routeService.init();
     if (!mounted) return;
     setState(() {
@@ -108,17 +108,17 @@ class _MyHomePageState extends State<MyHomePage> {
   void assign1(TextEditingController c) => mabda = c;
   void assign2(TextEditingController c) => maghsad = c;
 
-  void Select1() {
+  void select1() {
     setState(() => selected1 = true);
-    GetPath();
+    getPath();
   }
 
-  void Select2() {
+  void select2() {
     setState(() => selected2 = true);
-    GetPath();
+    getPath();
   }
 
-  Future<void> GetPath() async {
+  Future<void> getPath() async {
     if (!selected1 || !selected2) return;
     if (mabda.text.isEmpty || maghsad.text.isEmpty) return;
     if (mabda.text == maghsad.text) {
@@ -299,13 +299,13 @@ class _MyHomePageState extends State<MyHomePage> {
                     options: _activeOptions,
                     assign: assign1,
                     lable: 'مبدا',
-                    select: Select1,
+                    select: select1,
                   ),
                   AutocompleteBasic(
                     options: _activeOptions,
                     assign: assign2,
                     lable: 'مقصد',
-                    select: Select2,
+                    select: select2,
                   ),
                   if (showOnlineControls) ...[
                     const SizedBox(height: 8),
@@ -393,7 +393,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         : () {
                             selected1 = true;
                             selected2 = true;
-                            GetPath();
+                            getPath();
                           },
                     icon: _loading
                         ? const SizedBox(

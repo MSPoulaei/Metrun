@@ -6,54 +6,45 @@ import 'stack.dart';
 import 'package:collection/collection.dart';
 
 class Dijkstra {
-  SplayTreeMap<String, Node>? nodes_save;
+  SplayTreeMap<String, Node>? nodesSave;
   Future init() async {
     IstgahReader istgahReader = IstgahReader();
-    return nodes_save = await istgahReader.readFile();
+    return nodesSave = await istgahReader.readFile();
   }
 
   int getIntersectKhat(Node node1, Node node2) {
-    var khat_intersect_old_from = node1.khat.toList();
-    khat_intersect_old_from
+    var khatIntersectOldFrom = node1.khat.toList();
+    khatIntersectOldFrom
         .removeWhere((element) => !node2.khat.contains(element));
-    return khat_intersect_old_from[0];
+    return khatIntersectOldFrom[0];
   }
 
-  bool HasIntersectKhat(Node node1, Node node2) {
-    var khat_intersect_old_from = node1.khat.toList();
-    khat_intersect_old_from
+  bool hasIntersectKhat(Node node1, Node node2) {
+    var khatIntersectOldFrom = node1.khat.toList();
+    khatIntersectOldFrom
         .removeWhere((element) => !node2.khat.contains(element));
-    return khat_intersect_old_from.isNotEmpty;
+    return khatIntersectOldFrom.isNotEmpty;
   }
 
-  Pair<int, Stack<Node>> GetPath(String istgah1, String istgah2) {
-    // TreeMap nodes = TreeMap();
-    // SplayTreeSet<Node> set = SplayTreeSet.from(
-    //   nodes_save!.values,
-    //   (key1, key2) =>
-    //       key1.distance_from_source.compareTo(key2.distance_from_source),
-    // );
+  Pair<int, Stack<Node>> getPath(String istgah1, String istgah2) {
     HeapPriorityQueue<Node> queue = HeapPriorityQueue(
-      (p0, p1) => p0.distance_from_source.compareTo(p1.distance_from_source),
+      (p0, p1) => p0.distanceFromSource.compareTo(p1.distanceFromSource),
     );
-    var values = nodes_save!.values;
+    var values = nodesSave!.values;
     values
         .firstWhere((element) => element.name == istgah1)
-        .distance_from_source = 0;
+        .distanceFromSource = 0;
     queue.addAll(values);
-    // nodes.tree = SplayTreeMap.from(nodes_save!);
-    // nodes.tree[istgah1]!.distance_from_source = 0;
 
     Node? currentNode;
     while (true) {
-      // currentNode = nodes.tree[nodes.tree.firstKey()]!;
       currentNode = queue.removeFirst();
       if (currentNode.name == istgah2) break;
       for (var edge in currentNode.edges) {
         Node toNode = edge.to;
         int additionalCost = 0;
         if (currentNode.isTavizKhat && currentNode.previous != null) {
-          if (HasIntersectKhat(currentNode.previous!, toNode)) {
+          if (hasIntersectKhat(currentNode.previous!, toNode)) {
             if (!currentNode.khat
                 .contains(getIntersectKhat(currentNode.previous!, toNode))) {
               additionalCost = 10;
@@ -62,11 +53,11 @@ class Dijkstra {
             additionalCost = 10;
           }
         }
-        if (currentNode.distance_from_source + edge.weight + additionalCost <
-            toNode.distance_from_source) {
+        if (currentNode.distanceFromSource + edge.weight + additionalCost <
+            toNode.distanceFromSource) {
           queue.remove(toNode);
-          toNode.distance_from_source =
-              currentNode.distance_from_source + edge.weight + additionalCost;
+          toNode.distanceFromSource =
+              currentNode.distanceFromSource + edge.weight + additionalCost;
           toNode.previous = currentNode;
           queue.add(toNode);
         } else if (toNode.isTavizKhat) {
@@ -74,17 +65,15 @@ class Dijkstra {
               name: toNode.name,
               khat: toNode.khat,
               edges: toNode.edges,
-              distance_from_source: currentNode.distance_from_source +
+              distanceFromSource: currentNode.distanceFromSource +
                   edge.weight +
                   additionalCost,
               index: toNode.index,
               previous: currentNode));
         }
       }
-      // queue.removeFirst();
-      // nodes.tree.remove(currentNode.name);
     }
-    int distance = currentNode.distance_from_source;
+    int distance = currentNode.distanceFromSource;
     Stack<Node> path = Stack<Node>();
     while (currentNode != null) {
       path.push(currentNode);
@@ -99,15 +88,15 @@ class Node {
   List<int> khat;
   List<int> index;
   List<Edge> edges = <Edge>[];
-  int distance_from_source = 0x7fffffff; //infinity
+  int distanceFromSource = 0x7fffffff; //infinity
   Node? previous;
   bool get isTavizKhat => khat.length > 1;
-  Node({required this.name, required this.khat,required this.index});
+  Node({required this.name, required this.khat, required this.index});
   Node.from(
       {required this.name,
       required this.khat,
       required this.edges,
-      required this.distance_from_source,
+      required this.distanceFromSource,
       required this.index,
       this.previous});
 }

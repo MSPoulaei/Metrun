@@ -29,18 +29,18 @@ class Masiryab {
     return khatIntersect[0];
   }
 
-  bool HasIntersectKhat(Node node1, Node node2) {
+  bool hasIntersectKhat(Node node1, Node node2) {
     var khatIntersect = node1.khat.toList();
     khatIntersect.removeWhere((element) => !node2.khat.contains(element));
     return khatIntersect.isNotEmpty;
   }
 
-  Future<List<Stepp>> GetPath(
+  Future<List<Stepp>> getPath(
       String istgahMabda, String istgahMaghsad) async {
     List<Stepp> path = [];
     Dijkstra dijkstra = Dijkstra();
     return dijkstra.init().then((_) {
-      var res = dijkstra.GetPath(istgahMabda, istgahMaghsad);
+      var res = dijkstra.getPath(istgahMabda, istgahMaghsad);
       var stack = res.second;
       Node fromnode = stack.pop(), tonode = fromnode;
       int khat = getIntersectKhat(fromnode, stack.peek);

@@ -19,14 +19,14 @@ void main() {
     test('Dijkstra finds path between adjacent stations on Line 1', () async {
       final dijkstra = Dijkstra();
       await dijkstra.init();
-      final result = dijkstra.GetPath('تجریش', 'قیطریه');
+      final result = dijkstra.getPath('تجریش', 'قیطریه');
       expect(result.first, greaterThan(0));
       expect(result.second.isNotEmpty, isTrue);
     });
 
     test('Masiryab returns calculated route steps', () async {
       final masiryab = Masiryab();
-      final steps = await masiryab.GetPath('تجریش', 'شهدای هفتم تیر');
+      final steps = await masiryab.getPath('تجریش', 'شهدای هفتم تیر');
       expect(steps, isNotEmpty);
       // First step has total duration
       expect(steps.first.min, greaterThan(0));

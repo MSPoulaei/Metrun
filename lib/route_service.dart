@@ -234,7 +234,7 @@ class RouteService {
     final offlineNames = await _offlineStationList();
     final fromResolved = _resolveOfflineName(from, offlineNames);
     final toResolved = _resolveOfflineName(to, offlineNames);
-    return Masiryab().GetPath(fromResolved, toResolved);
+    return Masiryab().getPath(fromResolved, toResolved);
   }
 
   Future<List<String>> _offlineStationList() async {
@@ -246,7 +246,7 @@ class RouteService {
 
   Future<List<String>> _loadOfflineNames() async {
     try {
-      final pair = await IstgahReader().ReadStates();
+      final pair = await IstgahReader().readStates();
       return pair.first.toList();
     } catch (_) {
       return [];

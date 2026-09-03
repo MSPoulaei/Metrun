@@ -31,10 +31,6 @@ class IstgahReader {
     return Pair(all, firstLast);
   }
 
-  // Alias for backward compatibility
-  Future<Pair<Set<String>, List<Pair<String, String>>>> ReadStates() =>
-      readStates();
-
   Future<SplayTreeMap<String, Node>> readFile() async {
     final SplayTreeMap<String, Node> nodes = SplayTreeMap();
     final content = await rootBundle.loadString(path);
@@ -69,7 +65,4 @@ class IstgahReader {
     }
     return nodes;
   }
-
-  // Alias for backward compatibility
-  Future<SplayTreeMap<String, Node>> ReadFile() => readFile();
 }
