@@ -318,36 +318,20 @@ class _MyHomePageState extends State<MyHomePage> {
                   ),
                 ),
                 const SizedBox(height: 8),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF28A745),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                        ),
-                        icon: const Icon(Icons.star_rate_rounded, size: 18),
-                        label: const Text('کافه بازار', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                        onPressed: () => RatingPromptService.openCafeBazaar(context),
-                      ),
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange.shade700,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+                      padding: const EdgeInsets.symmetric(vertical: 11),
                     ),
-                    const SizedBox(width: 10),
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF1E88E5),
-                          foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                          padding: const EdgeInsets.symmetric(vertical: 10),
-                        ),
-                        icon: const Icon(Icons.star_rate_rounded, size: 18),
-                        label: const Text('مایکت', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold)),
-                        onPressed: () => RatingPromptService.openMyket(context),
-                      ),
-                    ),
-                  ],
+                    icon: const Icon(Icons.star_rate_rounded, size: 20),
+                    label: const Text('ثبت نظر و امتیاز به برنامه',
+                        style: TextStyle(fontSize: 13, fontWeight: FontWeight.bold)),
+                    onPressed: () => RatingPromptService.openStoreRating(context),
+                  ),
                 ),
                 const SizedBox(height: 8),
               ],

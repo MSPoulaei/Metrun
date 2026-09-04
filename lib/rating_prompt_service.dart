@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-/// Service to politely prompt satisfied users to rate the app on Cafe Bazaar / Myket
+/// Service to politely prompt satisfied users to rate the app on the installed store
 class RatingPromptService {
   static const int promptThreshold = 4;
   static const String _fileName = 'rating_state.json';
@@ -42,8 +42,8 @@ class RatingPromptService {
     } catch (_) {}
   }
 
-  /// Opens Cafe Bazaar app page (or web fallback) and marks has_rated = true
-  static Future<void> openCafeBazaar([BuildContext? context]) async {
+  /// Opens the market store app page using the standard Android market:// intent
+  static Future<void> openStoreRating([BuildContext? context]) async {
     try {
       final file = await _getFile();
       Map<String, dynamic> state = {};
@@ -54,34 +54,14 @@ class RatingPromptService {
       await file.writeAsString(jsonEncode(state));
     } catch (_) {}
 
-    final uri = Uri.parse('bazaar://details?id=$packageName');
-    final webUri = Uri.parse('https://cafebazaar.ir/app/$packageName');
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      await launchUrl(webUri, mode: LaunchMode.externalApplication);
-    }
-  }
-
-  /// Opens Myket app page (or web fallback) and marks has_rated = true
-  static Future<void> openMyket([BuildContext? context]) async {
+    final uri = Uri.parse('market://details?id=$packageName');
     try {
-      final file = await _getFile();
-      Map<String, dynamic> state = {};
-      if (await file.exists()) {
-        state = jsonDecode(await file.readAsString()) as Map<String, dynamic>;
+      if (await canLaunchUrl(uri)) {
+        await launchUrl(uri);
+      } else {
+        await launchUrl(uri, mode: LaunchMode.externalApplication);
       }
-      state['has_rated'] = true;
-      await file.writeAsString(jsonEncode(state));
     } catch (_) {}
-
-    final uri = Uri.parse('myket://details?id=$packageName');
-    final webUri = Uri.parse('https://myket.ir/app/$packageName');
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri);
-    } else {
-      await launchUrl(webUri, mode: LaunchMode.externalApplication);
-    }
   }
 
   static void _showRatingDialog(
@@ -121,43 +101,27 @@ class RatingPromptService {
                   style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                 ),
                 const SizedBox(height: 16),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton.icon(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.orange.shade700,
-                          foregroundColor: Colors.white,
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        icon: const Icon(Icons.star, size: 18),
-                        label: const Text('امتیاز در کافه بازار'),
-                        onPressed: () {
-                          Navigator.pop(ctx);
-                          openCafeBazaar(context);
-                        },
+                SizedBox(
+                  width: double.infinity,
+                  child: ElevatedButton.icon(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.orange.shade700,
+                      foregroundColor: Colors.white,
+                      padding: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
                       ),
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: OutlinedButton(
-                        style: OutlinedButton.styleFrom(
-                          padding: const EdgeInsets.symmetric(vertical: 12),
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                        ),
-                        child: const Text('امتیاز در مایکت'),
-                        onPressed: () {
-                          Navigator.pop(ctx);
-                          openMyket(context);
-                        },
-                      ),
+                    icon: const Icon(Icons.star_rounded, size: 20),
+                    label: const Text(
+                      'ثبت نظر و امتیاز به برنامه',
+                      style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
                     ),
-                  ],
+                    onPressed: () {
+                      Navigator.pop(ctx);
+                      openStoreRating(context);
+                    },
+                  ),
                 ),
                 const SizedBox(height: 8),
                 TextButton(
