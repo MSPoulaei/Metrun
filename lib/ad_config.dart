@@ -23,10 +23,10 @@ class AdConfig {
 
   /// In-memory ad flags (defaults take effect instantly with 0ms startup delay)
   static bool nativeEnabled = true;
-  static bool bannerEnabled = false;
+  static bool bannerEnabled = true;
 
   /// Reactive notifiers so UI components update live if remote config changes
-  static final ValueNotifier<bool> bannerNotifier = ValueNotifier(false);
+  static final ValueNotifier<bool> bannerNotifier = ValueNotifier(true);
   static final ValueNotifier<bool> nativeNotifier = ValueNotifier(true);
 
   /// Current chosen ad format (dice roll if both are active)

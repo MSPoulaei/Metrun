@@ -131,7 +131,7 @@ class RouteService {
             destinationName: toName,
             offlineSteps: offline,
             fellBack: true,
-            notice: 'سایت در دسترس نیست — مسیر تقریبی آفلاین',
+            notice: 'اینترنت در دسترس نیست — مسیر تقریبی آفلاین',
             error: e.toString(),
           );
         } catch (offlineErr) {

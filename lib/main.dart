@@ -261,7 +261,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  'مسیریاب هوشمند و زمان‌بندی خطوط متروی تهران',
+                  'مسیریاب هوشمند با در نظر گرفتن زمان‌بندی خطوط متروی تهران',
                   textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
                 ),
