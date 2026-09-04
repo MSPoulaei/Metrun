@@ -8,9 +8,9 @@ void main() {
     await tester.pumpWidget(const MyApp());
 
     // Verify AppBar title
-    expect(find.text('Metro Tehran Navigator'), findsOneWidget);
+    expect(find.text('متران'), findsOneWidget);
 
     // Verify map button exists in AppBar
-    expect(find.byIcon(Icons.map), findsOneWidget);
+    expect(find.byIcon(Icons.map_rounded), findsOneWidget);
   });
 }

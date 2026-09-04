@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../app_theme.dart';
 
 class AutocompleteBasic extends StatelessWidget {
   final void Function(TextEditingController) assign;
@@ -23,48 +24,54 @@ class AutocompleteBasic extends StatelessWidget {
       fieldViewBuilder:
           (context, textEditingController, focusNode, onFieldSubmitted) {
         assign(textEditingController);
-        return Directionality(
+        return TextField(
+          textAlign: TextAlign.right,
           textDirection: TextDirection.rtl,
-          child: TextField(
-            textAlign: TextAlign.right,
-            textDirection: TextDirection.rtl,
-            decoration: InputDecoration(
-              labelText: label,
-              prefixIcon: prefixIcon,
-              contentPadding:
-                  const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Colors.grey.shade300),
-              ),
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Colors.grey.shade300),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide(color: Colors.orange.shade700, width: 1.5),
-              ),
-              suffixIcon: ValueListenableBuilder<TextEditingValue>(
-                valueListenable: textEditingController,
-                builder: (context, value, _) {
-                  if (value.text.isEmpty) {
-                    return const SizedBox.shrink();
-                  }
-                  return IconButton(
-                    icon: const Icon(Icons.clear, size: 20),
-                    tooltip: 'پاک کردن',
-                    onPressed: textEditingController.clear,
-                  );
-                },
-              ),
+          decoration: InputDecoration(
+            labelText: label,
+            labelStyle: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
+            floatingLabelStyle: const TextStyle(
+              fontSize: 13,
+              color: AppColors.primary,
+              fontWeight: FontWeight.w600,
             ),
+            prefixIcon: prefixIcon,
+            filled: true,
+            fillColor: AppColors.background,
+            contentPadding:
+                const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            border: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: AppColors.cardBorder),
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide: const BorderSide(color: AppColors.cardBorder),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12),
+              borderSide:
+                  const BorderSide(color: AppColors.primary, width: 1.5),
+            ),
+            suffixIcon: ValueListenableBuilder<TextEditingValue>(
+              valueListenable: textEditingController,
+              builder: (context, value, _) {
+                if (value.text.isEmpty) {
+                  return const SizedBox.shrink();
+                }
+                return IconButton(
+                  icon: const Icon(Icons.clear, size: 20, color: AppColors.textMuted),
+                  tooltip: 'پاک کردن',
+                  onPressed: textEditingController.clear,
+                );
+              },
+            ),
+          ),
             controller: textEditingController,
             onSubmitted: (_) => onFieldSubmitted,
             focusNode: focusNode,
-          ),
-        );
-      },
+          );
+        },
       optionsBuilder: (TextEditingValue textEditingValue) {
         if (textEditingValue.text.isEmpty) {
           return const Iterable<String>.empty();

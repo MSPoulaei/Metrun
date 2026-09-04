@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../app_theme.dart';
 import '../recent_trips_service.dart';
 
 class RecentTripsBar extends StatelessWidget {
@@ -24,24 +25,24 @@ class RecentTripsBar extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 8, bottom: 4, right: 4),
                 child: Row(
                   children: [
-                    Icon(Icons.history, size: 16, color: Colors.grey.shade600),
+                    const Icon(Icons.history_rounded, size: 16, color: AppColors.textSecondary),
                     const SizedBox(width: 4),
-                    Text(
+                    const Text(
                       'مسیرهای اخیر',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey.shade700,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                     const Spacer(),
                     GestureDetector(
                       onTap: RecentTripsService.clearTrips,
-                      child: Text(
+                      child: const Text(
                         'پاک کردن',
                         style: TextStyle(
                           fontSize: 11,
-                          color: Colors.grey.shade500,
+                          color: AppColors.textMuted,
                         ),
                       ),
                     ),
@@ -57,15 +58,18 @@ class RecentTripsBar extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final trip = trips[index];
                     return ActionChip(
-                      elevation: 1,
-                      backgroundColor: Colors.orange.shade50,
-                      side: BorderSide(color: Colors.orange.shade200),
+                      elevation: 0,
+                      backgroundColor: AppColors.primaryContainer,
+                      side: const BorderSide(color: AppColors.primaryBorder),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       label: Text(
                         '${trip.from}  ←  ${trip.to}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 12,
-                          color: Colors.orange.shade900,
+                          color: AppColors.primaryText,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

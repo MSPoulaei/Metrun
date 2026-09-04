@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../app_theme.dart';
 import '../favorites_service.dart';
 
 class FavoritesBar extends StatelessWidget {
@@ -20,18 +21,18 @@ class FavoritesBar extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Padding(
-                padding: const EdgeInsets.only(top: 8, bottom: 4, right: 4),
+              const Padding(
+                padding: EdgeInsets.only(top: 8, bottom: 4, right: 4),
                 child: Row(
                   children: [
-                    const Icon(Icons.star_rounded, size: 18, color: Colors.amber),
-                    const SizedBox(width: 4),
+                    Icon(Icons.star_rounded, size: 18, color: AppColors.favoriteStar),
+                    SizedBox(width: 4),
                     Text(
                       'مسیرهای برگزیده',
                       style: TextStyle(
                         fontSize: 12,
                         fontWeight: FontWeight.bold,
-                        color: Colors.grey.shade700,
+                        color: AppColors.textPrimary,
                       ),
                     ),
                   ],
@@ -46,15 +47,18 @@ class FavoritesBar extends StatelessWidget {
                   itemBuilder: (context, index) {
                     final fav = favorites[index];
                     return ActionChip(
-                      elevation: 1,
-                      backgroundColor: Colors.amber.shade50,
-                      side: BorderSide(color: Colors.amber.shade300),
+                      elevation: 0,
+                      backgroundColor: AppColors.favoriteContainer,
+                      side: const BorderSide(color: AppColors.favoriteBorder),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
                       padding: const EdgeInsets.symmetric(horizontal: 4),
                       label: Text(
                         '${fav.from}  ★  ${fav.to}',
-                        style: TextStyle(
+                        style: const TextStyle(
                           fontSize: 12,
-                          color: Colors.amber.shade900,
+                          color: AppColors.favoriteText,
                           fontWeight: FontWeight.w600,
                         ),
                       ),

@@ -17,6 +17,7 @@ import 'package:masiryab_metro/widget/auto_complete.dart';
 import 'package:masiryab_metro/widget/banner_ad_widget.dart';
 import 'package:masiryab_metro/widget/favorites_bar.dart';
 import 'package:masiryab_metro/widget/native_ad_card.dart';
+import 'package:masiryab_metro/app_theme.dart';
 import 'package:masiryab_metro/widget/recent_trips_bar.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -30,12 +31,16 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Metrun',
-      theme: ThemeData(
-        primarySwatch: Colors.orange,
-        useMaterial3: false,
-      ),
-      home: const MyHomePage(title: 'Metro Tehran Navigator'),
+      title: 'متران',
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      builder: (context, child) {
+        return Directionality(
+          textDirection: TextDirection.rtl,
+          child: child!,
+        );
+      },
+      home: const MyHomePage(title: 'متران'),
     );
   }
 }
@@ -221,7 +226,7 @@ class _MyHomePageState extends State<MyHomePage> {
           textDirection: TextDirection.rtl,
           child: Container(
             decoration: const BoxDecoration(
-              color: Colors.white,
+              color: AppColors.surface,
               borderRadius: BorderRadius.vertical(top: Radius.circular(24)),
             ),
             padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
@@ -233,55 +238,55 @@ class _MyHomePageState extends State<MyHomePage> {
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 16),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
+                    color: AppColors.cardBorder,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
                 Container(
                   padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(
-                    color: Colors.orange.shade50,
+                  decoration: const BoxDecoration(
+                    color: AppColors.primaryContainer,
                     shape: BoxShape.circle,
                   ),
-                  child: Icon(
+                  child: const Icon(
                     Icons.directions_subway_rounded,
                     size: 48,
-                    color: Colors.orange.shade700,
+                    color: AppColors.primary,
                   ),
                 ),
                 const SizedBox(height: 12),
                 const Text(
                   'متران (Metrun)',
-                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                 ),
                 const SizedBox(height: 4),
                 Text(
                   'نسخه ${version.toPersianDigits()}',
-                  style: TextStyle(fontSize: 13, color: Colors.grey.shade600),
+                  style: const TextStyle(fontSize: 13, color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 8),
-                Text(
+                const Text(
                   'مسیریاب هوشمند با در نظر گرفتن زمان‌بندی خطوط متروی تهران',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
                 ),
                 const Divider(height: 28),
                 // Developer & Company Info
-                Row(
+                const Row(
                   children: [
-                    Icon(Icons.person_rounded, size: 20, color: Colors.orange.shade700),
-                    const SizedBox(width: 8),
-                    const Text('توسعه‌دهنده: ', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                    const Text('محمد صادق پولائی', style: TextStyle(fontSize: 13)),
+                    Icon(Icons.person_rounded, size: 20, color: AppColors.primary),
+                    SizedBox(width: 8),
+                    Text('توسعه‌دهنده: ', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
+                    Text('محمد صادق پولائی', style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
                   ],
                 ),
                 const SizedBox(height: 8),
-                Row(
+                const Row(
                   children: [
-                    Icon(Icons.business_rounded, size: 20, color: Colors.orange.shade700),
-                    const SizedBox(width: 8),
-                    const Text('شرکت: ', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13)),
-                    const Text('فردیس سافت (FardisSoft)', style: TextStyle(fontSize: 13)),
+                    Icon(Icons.business_rounded, size: 20, color: AppColors.primary),
+                    SizedBox(width: 8),
+                    Text('شرکت: ', style: TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.textPrimary)),
+                    Text('فردیس سافت (FardisSoft)', style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
                   ],
                 ),
                 const SizedBox(height: 16),
@@ -292,7 +297,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     style: OutlinedButton.styleFrom(
                       foregroundColor: const Color(0xFF229ED9),
                       side: const BorderSide(color: Color(0xFF229ED9)),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
                       padding: const EdgeInsets.symmetric(vertical: 10),
                     ),
                     icon: const Icon(Icons.send_rounded, size: 18),
@@ -314,7 +319,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   alignment: Alignment.centerRight,
                   child: Text(
                     'حمایت و ثبت نظر:',
-                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600),
+                    style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
                   ),
                 ),
                 const SizedBox(height: 8),
@@ -322,10 +327,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange.shade700,
+                      backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
-                      padding: const EdgeInsets.symmetric(vertical: 11),
+                      elevation: 2,
+                      shadowColor: const Color(0x35E65100),
+                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
+                      padding: const EdgeInsets.symmetric(vertical: 12),
                     ),
                     icon: const Icon(Icons.star_rate_rounded, size: 20),
                     label: const Text('ثبت نظر و امتیاز به برنامه',
@@ -371,57 +378,40 @@ class _MyHomePageState extends State<MyHomePage> {
     }
   }
 
-  Color getColorByKhat(int khat) {
-    switch (khat) {
-      case 1:
-        return const Color(0xffef2e25);
-      case 2:
-        return const Color(0xff04509f);
-      case 3:
-        return const Color(0xff18C0F5);
-      case 4:
-        return const Color(0xffFAD103);
-      case 5:
-        return const Color(0xff06885c);
-      case 6:
-        return const Color(0xfff670ab);
-      case 7:
-        return const Color(0xff85317a);
-      default:
-        return const Color(0xff9E9E9E);
-    }
-  }
+  Color getColorByKhat(int khat) => AppColors.getMetroLineColor(khat);
 
   void _openMap() {
     const photourl = 'assets/images/metro_map.jpg';
     Navigator.of(context).push(
-      PageRouteBuilder(
-        opaque: true,
-        barrierDismissible: false,
-        pageBuilder: (BuildContext context, _, __) {
+      MaterialPageRoute(
+        builder: (context) {
           return Scaffold(
+            appBar: AppBar(
+              flexibleSpace: Container(
+                decoration: const BoxDecoration(
+                  gradient: AppColors.primaryGradient,
+                ),
+              ),
+              title: const Text('نقشه خطوط متروی تهران'),
+              actions: [
+                IconButton(
+                  icon: const Icon(Icons.close_rounded, color: Colors.white),
+                  tooltip: 'بستن',
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+            ),
+            backgroundColor: Colors.white,
             body: SafeArea(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: <Widget>[
-                  Align(
-                    alignment: Alignment.topRight,
-                    child: IconButton(
-                      onPressed: () => Navigator.of(context).pop(),
-                      icon: const Icon(Icons.cancel_sharp),
-                    ),
+              child: InteractiveViewer(
+                minScale: 0.5,
+                maxScale: 5.0,
+                child: Center(
+                  child: Hero(
+                    tag: photourl,
+                    child: Image.asset(photourl),
                   ),
-                  Expanded(
-                    child: InteractiveViewer(
-                      scaleEnabled: true,
-                      panEnabled: true,
-                      child: Hero(
-                        tag: photourl,
-                        child: Center(child: Image.asset(photourl)),
-                      ),
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           );
@@ -444,18 +434,65 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: Colors.orange.shade600,
+        flexibleSpace: Container(
+          decoration: const BoxDecoration(
+            gradient: AppColors.primaryGradient,
+          ),
+        ),
+        elevation: 2,
+        shadowColor: const Color(0x25000000),
+        titleSpacing: 12,
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Container(
+              padding: const EdgeInsets.all(7),
+              decoration: BoxDecoration(
+                color: Colors.white.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(10),
+              ),
+              child: const Icon(
+                Icons.directions_subway_rounded,
+                color: Colors.white,
+                size: 22,
+              ),
+            ),
+            const SizedBox(width: 10),
+            const Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Text(
+                  'متران',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+                Text(
+                  'مسیریاب هوشمند متروی تهران',
+                  style: TextStyle(
+                    color: Color(0xEEFFFFFF),
+                    fontSize: 11,
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
         actions: [
+          IconButton(
+            onPressed: _openMap,
+            icon: const Icon(Icons.map_rounded, color: Colors.white),
+            tooltip: 'نقشه مترو',
+          ),
           IconButton(
             onPressed: _showAboutDialog,
             icon: const Icon(Icons.info_outline_rounded, color: Colors.white),
             tooltip: 'درباره متران',
-          ),
-          IconButton(
-            onPressed: _openMap,
-            icon: const Icon(Icons.map, color: Colors.white),
-            tooltip: 'نقشه مترو',
           ),
         ],
       ),
@@ -466,235 +503,289 @@ class _MyHomePageState extends State<MyHomePage> {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: <Widget>[
-                  Card(
-                    elevation: 2,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(12),
+                  Container(
+                    decoration: BoxDecoration(
+                      color: AppColors.surface,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppColors.cardBorder),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x0A000000),
+                          blurRadius: 10,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
                     ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Row(
-                        children: [
-                          Expanded(
-                            child: Column(
-                              children: [
-                                AutocompleteBasic(
-                                  options: _activeOptions,
-                                  assign: assign1,
-                                  label: 'ایستگاه مبدا',
-                                  prefixIcon: Icon(
-                                    Icons.circle,
-                                    size: 14,
-                                    color: Colors.green.shade600,
-                                  ),
-                                  select: select1,
+                    padding: const EdgeInsets.all(12.0),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Column(
+                            children: [
+                              AutocompleteBasic(
+                                options: _activeOptions,
+                                assign: assign1,
+                                label: 'ایستگاه مبدا',
+                                prefixIcon: const Icon(
+                                  Icons.radio_button_checked_rounded,
+                                  size: 20,
+                                  color: AppColors.originStation,
                                 ),
-                                const SizedBox(height: 8),
-                                AutocompleteBasic(
-                                  options: _activeOptions,
-                                  assign: assign2,
-                                  label: 'ایستگاه مقصد',
-                                  prefixIcon: Icon(
-                                    Icons.location_on,
-                                    size: 18,
-                                    color: Colors.red.shade600,
-                                  ),
-                                  select: select2,
+                                select: select1,
+                              ),
+                              const SizedBox(height: 10),
+                              AutocompleteBasic(
+                                options: _activeOptions,
+                                assign: assign2,
+                                label: 'ایستگاه مقصد',
+                                prefixIcon: const Icon(
+                                  Icons.location_on_rounded,
+                                  size: 22,
+                                  color: AppColors.destStation,
                                 ),
-                              ],
+                                select: select2,
+                              ),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Material(
+                          color: AppColors.primaryContainer,
+                          shape: const CircleBorder(),
+                          clipBehavior: Clip.antiAlias,
+                          child: InkWell(
+                            onTap: _swapStations,
+                            child: const Padding(
+                              padding: EdgeInsets.all(10.0),
+                              child: Icon(
+                                Icons.swap_vert_rounded,
+                                size: 26,
+                                color: AppColors.primary,
+                              ),
                             ),
                           ),
-                          const SizedBox(width: 4),
-                          IconButton(
-                            icon: Icon(
-                              Icons.swap_vert_rounded,
-                              size: 28,
-                              color: Colors.orange.shade800,
-                            ),
-                            tooltip: 'جابجایی مبدا و مقصد',
-                            onPressed: _swapStations,
-                          ),
-                        ],
-                      ),
+                        ),
+                      ],
                     ),
                   ),
                   FavoritesBar(onSelectTrip: _selectRecentTrip),
                   RecentTripsBar(onSelectTrip: _selectRecentTrip),
                   if (showOnlineControls) ...[
                     const SizedBox(height: 6),
-                    Directionality(
-                      textDirection: TextDirection.rtl,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: Colors.grey.shade200),
-                          boxShadow: const [
-                            BoxShadow(
-                              color: Color(0x08000000),
-                              blurRadius: 4,
-                              offset: Offset(0, 1),
-                            ),
-                          ],
-                        ),
-                        child: Column(
-                          children: [
-                            Row(
-                              children: [
-                                // Day Type Dropdown
-                                Container(
-                                  padding: const EdgeInsets.symmetric(horizontal: 8),
-                                  decoration: BoxDecoration(
-                                    color: Colors.grey.shade50,
-                                    borderRadius: BorderRadius.circular(8),
-                                    border: Border.all(color: Colors.grey.shade300),
-                                  ),
-                                  child: DropdownButtonHideUnderline(
-                                    child: DropdownButton<int>(
-                                      value: dayLabels.containsKey(_dayType)
-                                          ? _dayType
-                                          : dayLabels.keys.first,
-                                      isDense: true,
-                                      icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 18),
-                                      items: dayLabels.entries
-                                          .map(
-                                            (e) => DropdownMenuItem(
-                                              value: e.key,
-                                              child: Text(e.value,
-                                                  style: const TextStyle(fontSize: 12)),
-                                            ),
-                                          )
-                                          .toList(),
-                                      onChanged: (v) {
-                                        if (v != null) setState(() => _dayType = v);
-                                      },
-                                    ),
-                                  ),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                      decoration: BoxDecoration(
+                        color: AppColors.surface,
+                        borderRadius: BorderRadius.circular(16),
+                        border: Border.all(color: AppColors.cardBorder),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x08000000),
+                            blurRadius: 6,
+                            offset: Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Column(
+                        children: [
+                          Row(
+                            children: [
+                              // Day Type Dropdown
+                              Container(
+                                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 2),
+                                decoration: BoxDecoration(
+                                  color: AppColors.background,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(color: AppColors.cardBorder),
                                 ),
-                                const Spacer(),
-                                // Time Picker Button
-                                InkWell(
-                                  onTap: _pickTime,
-                                  borderRadius: BorderRadius.circular(8),
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 10, vertical: 5),
-                                    decoration: BoxDecoration(
-                                      color: Colors.orange.shade50,
-                                      borderRadius: BorderRadius.circular(8),
-                                      border: Border.all(color: Colors.orange.shade300),
-                                    ),
-                                    child: Row(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Icon(Icons.access_time_filled_rounded,
-                                            size: 16, color: Colors.orange.shade800),
-                                        const SizedBox(width: 6),
-                                        Text(
-                                          '${_hour.toString().padLeft(2, '0')}:${_minute.toString().padLeft(2, '0')}'
-                                              .toPersianDigits(),
-                                          style: TextStyle(
-                                            fontSize: 13,
-                                            fontWeight: FontWeight.bold,
-                                            color: Colors.orange.shade900,
+                                child: DropdownButtonHideUnderline(
+                                  child: DropdownButton<int>(
+                                    value: dayLabels.containsKey(_dayType)
+                                        ? _dayType
+                                        : dayLabels.keys.first,
+                                    isDense: true,
+                                    icon: const Icon(Icons.keyboard_arrow_down_rounded, size: 18),
+                                    items: dayLabels.entries
+                                        .map(
+                                          (e) => DropdownMenuItem(
+                                            value: e.key,
+                                            child: Text(e.value,
+                                                style: const TextStyle(fontSize: 12, color: AppColors.textPrimary)),
                                           ),
-                                        ),
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                                const SizedBox(width: 6),
-                                // "الان" quick button
-                                TextButton.icon(
-                                  style: TextButton.styleFrom(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 8, vertical: 4),
-                                    minimumSize: Size.zero,
-                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                    foregroundColor: Colors.orange.shade800,
-                                  ),
-                                  onPressed: _useNow,
-                                  icon: const Icon(Icons.replay_rounded, size: 14),
-                                  label: const Text('الان',
-                                      style: TextStyle(
-                                          fontSize: 12, fontWeight: FontWeight.bold)),
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 8),
-                            // Departure vs Arrival Segmented Button
-                            SizedBox(
-                              width: double.infinity,
-                              child: SegmentedButton<int>(
-                                segments: const [
-                                  ButtonSegment<int>(
-                                    value: RouteQuery.scheduleDepart,
-                                    label: Text('زمان حرکت',
-                                        style: TextStyle(fontSize: 12)),
-                                    icon: Icon(Icons.directions_walk_rounded, size: 16),
-                                    tooltip: 'ساعت حرکت از ایستگاه مبدا',
-                                  ),
-                                  ButtonSegment<int>(
-                                    value: RouteQuery.scheduleArrive,
-                                    label: Text('زمان رسیدن',
-                                        style: TextStyle(fontSize: 12)),
-                                    icon: Icon(Icons.flag_rounded, size: 16),
-                                    tooltip: 'رسیدن به ایستگاه مقصد قبل از این ساعت',
-                                  ),
-                                ],
-                                selected: {_scheduleType},
-                                onSelectionChanged: (newSelection) {
-                                  setState(() => _scheduleType = newSelection.first);
-                                },
-                                style: ButtonStyle(
-                                  visualDensity: VisualDensity.compact,
-                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                                  shape: WidgetStateProperty.all(
-                                    RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(8)),
+                                        )
+                                        .toList(),
+                                    onChanged: (v) {
+                                      if (v != null) setState(() => _dayType = v);
+                                    },
                                   ),
                                 ),
                               ),
+                              const Spacer(),
+                              // Time Picker Button
+                              InkWell(
+                                onTap: _pickTime,
+                                borderRadius: BorderRadius.circular(10),
+                                child: Container(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 10, vertical: 6),
+                                  decoration: BoxDecoration(
+                                    color: AppColors.primaryContainer,
+                                    borderRadius: BorderRadius.circular(10),
+                                    border: Border.all(color: AppColors.primaryBorder),
+                                  ),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      const Icon(Icons.access_time_filled_rounded,
+                                          size: 16, color: AppColors.primary),
+                                      const SizedBox(width: 6),
+                                      Text(
+                                        '${_hour.toString().padLeft(2, '0')}:${_minute.toString().padLeft(2, '0')}'
+                                            .toPersianDigits(),
+                                        style: const TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.bold,
+                                          color: AppColors.primaryText,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              // "الان" quick button
+                              TextButton.icon(
+                                style: TextButton.styleFrom(
+                                  padding: const EdgeInsets.symmetric(
+                                      horizontal: 8, vertical: 4),
+                                  minimumSize: Size.zero,
+                                  tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  foregroundColor: AppColors.primary,
+                                ),
+                                onPressed: _useNow,
+                                icon: const Icon(Icons.replay_rounded, size: 14),
+                                label: const Text('الان',
+                                    style: TextStyle(
+                                        fontSize: 12, fontWeight: FontWeight.bold)),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(height: 8),
+                          // Departure vs Arrival Segmented Button
+                          SizedBox(
+                            width: double.infinity,
+                            child: SegmentedButton<int>(
+                              segments: const [
+                                ButtonSegment<int>(
+                                  value: RouteQuery.scheduleDepart,
+                                  label: Text('زمان حرکت',
+                                      style: TextStyle(fontSize: 12)),
+                                  icon: Icon(Icons.directions_walk_rounded, size: 16),
+                                  tooltip: 'ساعت حرکت از ایستگاه مبدا',
+                                ),
+                                ButtonSegment<int>(
+                                  value: RouteQuery.scheduleArrive,
+                                  label: Text('زمان رسیدن',
+                                      style: TextStyle(fontSize: 12)),
+                                  icon: Icon(Icons.flag_rounded, size: 16),
+                                  tooltip: 'رسیدن به ایستگاه مقصد قبل از این ساعت',
+                                ),
+                              ],
+                              selected: {_scheduleType},
+                              onSelectionChanged: (newSelection) {
+                                setState(() => _scheduleType = newSelection.first);
+                              },
+                              style: ButtonStyle(
+                                visualDensity: VisualDensity.compact,
+                                tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                backgroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                                  if (states.contains(WidgetState.selected)) {
+                                    return AppColors.primary;
+                                  }
+                                  return AppColors.background;
+                                }),
+                                foregroundColor: WidgetStateProperty.resolveWith<Color?>((states) {
+                                  if (states.contains(WidgetState.selected)) {
+                                    return Colors.white;
+                                  }
+                                  return AppColors.textSecondary;
+                                }),
+                                side: WidgetStateProperty.all(
+                                  const BorderSide(color: AppColors.cardBorder),
+                                ),
+                                shape: WidgetStateProperty.all(
+                                  RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(10)),
+                                ),
+                              ),
                             ),
-                          ],
-                        ),
+                          ),
+                        ],
                       ),
                     ),
                   ],
                   const SizedBox(height: 8),
-                  ElevatedButton.icon(
-                    onPressed: _loading
-                        ? null
-                        : () {
-                            selected1 = true;
-                            selected2 = true;
-                            getPath();
-                          },
-                    icon: _loading
-                        ? const SizedBox(
-                            width: 16,
-                            height: 16,
-                            child: CircularProgressIndicator(strokeWidth: 2),
-                          )
-                        : const Icon(Icons.search),
-                    label: Text(_loading ? 'در حال جستجو…' : 'جستجوی مسیر'),
+                  Container(
+                    width: double.infinity,
+                    height: 48,
+                    decoration: BoxDecoration(
+                      gradient: AppColors.primaryGradient,
+                      borderRadius: BorderRadius.circular(14),
+                      boxShadow: const [
+                        BoxShadow(
+                          color: Color(0x35E65100),
+                          blurRadius: 8,
+                          offset: Offset(0, 3),
+                        ),
+                      ],
+                    ),
+                    child: ElevatedButton.icon(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.transparent,
+                        shadowColor: Colors.transparent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(14),
+                        ),
+                      ),
+                      onPressed: _loading
+                          ? null
+                          : () {
+                              selected1 = true;
+                              selected2 = true;
+                              getPath();
+                            },
+                      icon: _loading
+                          ? const SizedBox(
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                strokeWidth: 2.2,
+                                color: Colors.white,
+                              ),
+                            )
+                          : const Icon(Icons.search_rounded, color: Colors.white),
+                      label: Text(
+                        _loading ? 'در حال جستجو…' : 'جستجوی مسیر',
+                        style: const TextStyle(
+                          fontSize: 15,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
                   ),
                   if (_result?.notice != null)
                     Padding(
                       padding: const EdgeInsets.only(top: 6),
-                      child: Directionality(
-                        textDirection: TextDirection.rtl,
-                        child: Text(
-                          _result!.notice!,
-                          style: TextStyle(
-                            color: _result!.fellBack
-                                ? Colors.deepOrange
-                                : Colors.grey.shade700,
-                            fontSize: 12,
-                          ),
-                          textAlign: TextAlign.center,
+                      child: Text(
+                        _result!.notice!,
+                        style: TextStyle(
+                          color: _result!.fellBack
+                              ? AppColors.primaryLight
+                              : AppColors.textSecondary,
+                          fontSize: 12,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                   const SizedBox(height: 8),
@@ -725,30 +816,41 @@ class _MyHomePageState extends State<MyHomePage> {
     final result = _result;
     if (result == null) {
       return Center(
-        child: Directionality(
-          textDirection: TextDirection.rtl,
+        child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              Icon(
-                Icons.directions_subway_rounded,
-                size: 64,
-                color: Colors.orange.shade300,
+              Container(
+                width: 84,
+                height: 84,
+                decoration: BoxDecoration(
+                  color: AppColors.primaryContainer,
+                  shape: BoxShape.circle,
+                  border: Border.all(color: AppColors.primaryBorder, width: 2),
+                ),
+                child: const Icon(
+                  Icons.directions_subway_rounded,
+                  size: 44,
+                  color: AppColors.primary,
+                ),
               ),
-              const SizedBox(height: 12),
-              Text(
+              const SizedBox(height: 14),
+              const Text(
                 'مبدا و مقصد را انتخاب کنید',
                 style: TextStyle(
                   fontSize: 16,
                   fontWeight: FontWeight.bold,
-                  color: Colors.grey.shade700,
+                  color: AppColors.textPrimary,
                 ),
               ),
               const SizedBox(height: 6),
-              Text(
-                'می‌توانید نام ایستگاه را جستجو کرده یا از مسیرهای اخیر انتخاب کنید',
-                style: TextStyle(fontSize: 12, color: Colors.grey.shade500),
-                textAlign: TextAlign.center,
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24),
+                child: Text(
+                  'ایستگاه مبدا و مقصد را انتخاب کنید تا کوتاه‌ترین و سریع‌ترین مسیر به همراه زمان‌بندی حرکت قطارها نمایش داده شود.',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 12, color: AppColors.textSecondary, height: 1.5),
+                ),
               ),
             ],
           ),
@@ -779,7 +881,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   List<Color> _buildGradientColors(List<int> lines) {
     if (lines.isEmpty) {
-      return const [Colors.orange, Colors.orange];
+      return const [AppColors.primary, AppColors.primaryLight];
     }
     final colors = lines.map(getColorByKhat).toList();
     if (colors.length == 1) {
@@ -804,183 +906,212 @@ class _MyHomePageState extends State<MyHomePage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             if (route.departTime != null && route.arriveTime != null)
-              Card(
-                elevation: 8,
-                child: Container(
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-                  decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(5),
-                    gradient: LinearGradient(
-                      colors: _buildGradientColors(realLines),
-                      begin: Alignment.centerRight,
-                      end: Alignment.centerLeft,
-                    ),
+              Container(
+                margin: const EdgeInsets.only(bottom: 8),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(16),
+                  gradient: LinearGradient(
+                    colors: _buildGradientColors(realLines),
+                    begin: Alignment.centerRight,
+                    end: Alignment.centerLeft,
                   ),
-                  child: Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.center,
+                  boxShadow: const [
+                    BoxShadow(
+                      color: Color(0x18000000),
+                      blurRadius: 8,
+                      offset: Offset(0, 3),
+                    ),
+                  ],
+                ),
+                padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Text(
-                              route.title,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                                fontWeight: FontWeight.bold,
-                                shadows: [
-                                  Shadow(blurRadius: 4, color: Colors.black54),
-                                ],
+                        Text(
+                          route.title,
+                          textAlign: TextAlign.center,
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            shadows: [
+                              Shadow(blurRadius: 6, color: Colors.black54),
+                            ],
+                          ),
+                        ),
+                        const SizedBox(width: 4),
+                        ValueListenableBuilder<List<FavoriteTrip>>(
+                          valueListenable: FavoritesService.favoritesNotifier,
+                          builder: (context, _, __) {
+                            final isFav = FavoritesService.isFavorite(
+                                mabda.text, maghsad.text);
+                            return IconButton(
+                              icon: Icon(
+                                isFav
+                                    ? Icons.star_rounded
+                                    : Icons.star_outline_rounded,
+                                color: isFav ? AppColors.favoriteStar : Colors.white,
+                                size: 24,
                               ),
-                            ),
-                            const SizedBox(width: 4),
-                            ValueListenableBuilder<List<FavoriteTrip>>(
-                              valueListenable: FavoritesService.favoritesNotifier,
-                              builder: (context, _, __) {
-                                final isFav = FavoritesService.isFavorite(
+                              tooltip: isFav
+                                  ? 'حذف از برگزیده‌ها'
+                                  : 'افزودن به برگزیده‌ها',
+                              onPressed: () {
+                                FavoritesService.toggleFavorite(
                                     mabda.text, maghsad.text);
-                                return IconButton(
-                                  icon: Icon(
-                                    isFav
-                                        ? Icons.star_rounded
-                                        : Icons.star_outline_rounded,
-                                    color: isFav ? Colors.amber : Colors.white,
-                                    size: 24,
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(isFav
+                                        ? 'از مسیرهای برگزیده حذف شد'
+                                        : 'به مسیرهای برگزیده افزوده شد'),
+                                    duration: const Duration(seconds: 1),
                                   ),
-                                  tooltip: isFav
-                                      ? 'حذف از برگزیده‌ها'
-                                      : 'افزودن به برگزیده‌ها',
-                                  onPressed: () {
-                                    FavoritesService.toggleFavorite(
-                                        mabda.text, maghsad.text);
-                                    ScaffoldMessenger.of(context).showSnackBar(
-                                      SnackBar(
-                                        content: Text(isFav
-                                            ? 'از مسیرهای برگزیده حذف شد'
-                                            : 'به مسیرهای برگزیده افزوده شد'),
-                                        duration: const Duration(seconds: 1),
-                                      ),
-                                    );
-                                  },
                                 );
                               },
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 4),
-                        Wrap(
-                          alignment: WrapAlignment.center,
-                          crossAxisAlignment: WrapCrossAlignment.center,
-                          spacing: 8,
-                          runSpacing: 4,
-                          children: [
-                            Directionality(
-                              textDirection: TextDirection.rtl,
-                              child: Row(
-                                mainAxisSize: MainAxisSize.min,
-                                children: [
-                                  Text(
-                                    route.departTime!.toPersianDigits(),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      shadows: [
-                                        Shadow(blurRadius: 4, color: Colors.black54),
-                                      ],
-                                    ),
-                                  ),
-                                  const Padding(
-                                    padding: EdgeInsets.symmetric(horizontal: 4),
-                                    child: Icon(
-                                      Icons.arrow_forward,
-                                      color: Colors.white,
-                                      size: 16,
-                                    ),
-                                  ),
-                                  Text(
-                                    route.arriveTime!.toPersianDigits(),
-                                    style: const TextStyle(
-                                      color: Colors.white,
-                                      fontSize: 15,
-                                      fontWeight: FontWeight.bold,
-                                      shadows: [
-                                        Shadow(blurRadius: 4, color: Colors.black54),
-                                      ],
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Text(
-                              ('(${route.stationCount} ایستگاه'
-                                      '${realLines.isEmpty ? '' : '، خطوط ${realLines.join('، ')}'})')
-                                  .toPersianDigits(),
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 13,
-                                shadows: [
-                                  Shadow(blurRadius: 4, color: Colors.black54),
-                                ],
-                              ),
-                            ),
-                          ],
+                            );
+                          },
                         ),
                       ],
                     ),
-                  ),
+                    const SizedBox(height: 6),
+                    Container(
+                      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                      decoration: BoxDecoration(
+                        color: Colors.black.withValues(alpha: 0.35),
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: Wrap(
+                        alignment: WrapAlignment.center,
+                        crossAxisAlignment: WrapCrossAlignment.center,
+                        spacing: 8,
+                        runSpacing: 4,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                route.departTime!.toPersianDigits(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                              const Padding(
+                                padding: EdgeInsets.symmetric(horizontal: 6),
+                                child: Icon(
+                                  Icons.arrow_forward_rounded,
+                                  color: Colors.white,
+                                  size: 16,
+                                ),
+                              ),
+                              Text(
+                                route.arriveTime!.toPersianDigits(),
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 15,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                          Text(
+                            ('(${route.stationCount} ایستگاه'
+                                    '${realLines.isEmpty ? '' : '، خطوط ${realLines.join('، ')}'})')
+                                .toPersianDigits(),
+                            style: const TextStyle(
+                              color: Color(0xEEFFFFFF),
+                              fontSize: 12,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ...List.generate(route.steps.length, (i) {
-                      final step = route.steps[i];
-                      final realLine = cssLineToMetroLine(step.line);
-                      final prevLine = i > 0
-                          ? cssLineToMetroLine(route.steps[i - 1].line)
-                          : null;
-                      final transfer = prevLine != null && prevLine != realLine;
-                      return Card(
-                        elevation: 4,
-                        child: Directionality(
-                          textDirection: TextDirection.rtl,
-                          child: ListTile(
-                            leading: CircleAvatar(
-                              backgroundColor: getColorByKhat(realLine),
-                              child: Text(
-                                '$realLine',
-                                style: const TextStyle(color: Colors.white, fontSize: 12),
-                              ),
-                            ),
-                            title: Text(step.station),
-                            subtitle: Text(
-                              transfer
-                                  ? '${step.time}  •  خط $realLine  (تعویض خط)'
-                                  : '${step.time}  •  خط $realLine',
-                            ),
-                            trailing: Text('${step.order}'),
-                          ),
-                        ),
-                      );
-                    }),
-            if (route.instructions.isNotEmpty)
-              Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(12),
-                  child: Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: route.instructions
-                          .map((i) => Padding(
-                                padding: const EdgeInsets.only(bottom: 4),
-                                child: Text('• $i'),
-                              ))
-                          .toList(),
+              final step = route.steps[i];
+              final realLine = cssLineToMetroLine(step.line);
+              final prevLine = i > 0
+                  ? cssLineToMetroLine(route.steps[i - 1].line)
+                  : null;
+              final transfer = prevLine != null && prevLine != realLine;
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.cardBorder),
+                ),
+                child: ListTile(
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 2),
+                  leading: CircleAvatar(
+                    backgroundColor: getColorByKhat(realLine),
+                    child: Text(
+                      '$realLine',
+                      style: const TextStyle(color: Colors.white, fontSize: 13, fontWeight: FontWeight.bold),
                     ),
                   ),
+                  title: Text(
+                    step.station,
+                    style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14, color: AppColors.textPrimary),
+                  ),
+                  subtitle: transfer
+                      ? Row(
+                          children: [
+                            Text('${step.time}  •  خط $realLine', style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                            const SizedBox(width: 8),
+                            Container(
+                              padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                              decoration: BoxDecoration(
+                                color: AppColors.transferBadgeBg,
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(color: AppColors.primaryBorder),
+                              ),
+                              child: const Text('تعویض خط', style: TextStyle(color: AppColors.transferBadgeText, fontSize: 10, fontWeight: FontWeight.bold)),
+                            ),
+                          ],
+                        )
+                      : Text(
+                          '${step.time}  •  خط $realLine',
+                          style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                        ),
+                  trailing: Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.background,
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text(
+                      '${step.order}'.toPersianDigits(),
+                      style: const TextStyle(fontSize: 12, color: AppColors.textSecondary, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+                ),
+              );
+            }),
+            if (route.instructions.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.symmetric(vertical: 6),
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.cardBorder),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: route.instructions
+                      .map((i) => Padding(
+                            padding: const EdgeInsets.only(bottom: 4),
+                            child: Text('• $i', style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                          ))
+                      .toList(),
                 ),
               ),
             const SizedBox(height: 12),
@@ -1002,67 +1133,69 @@ class _MyHomePageState extends State<MyHomePage> {
 
     return Column(
       children: [
-        Card(
-          elevation: 10,
-          child: Container(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 10),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(5),
-              gradient: LinearGradient(
-                colors: _buildGradientColors(khats),
-                begin: Alignment.centerRight,
-                end: Alignment.centerLeft,
-              ),
+        Container(
+          margin: const EdgeInsets.only(bottom: 8),
+          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 12),
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(16),
+            gradient: LinearGradient(
+              colors: _buildGradientColors(khats),
+              begin: Alignment.centerRight,
+              end: Alignment.centerLeft,
             ),
-            child: Directionality(
-              textDirection: TextDirection.rtl,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    text.toPersianDigits(),
-                    textAlign: TextAlign.center,
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+            boxShadow: const [
+              BoxShadow(
+                color: Color(0x18000000),
+                blurRadius: 8,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                text.toPersianDigits(),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  color: Colors.white,
+                  fontSize: 18,
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              const SizedBox(width: 8),
+              ValueListenableBuilder<List<FavoriteTrip>>(
+                valueListenable: FavoritesService.favoritesNotifier,
+                builder: (context, _, __) {
+                  final isFav = FavoritesService.isFavorite(
+                      mabda.text, maghsad.text);
+                  return IconButton(
+                    icon: Icon(
+                      isFav
+                          ? Icons.star_rounded
+                          : Icons.star_outline_rounded,
+                      color: isFav ? AppColors.favoriteStar : Colors.white,
+                      size: 26,
                     ),
-                  ),
-                  const SizedBox(width: 8),
-                  ValueListenableBuilder<List<FavoriteTrip>>(
-                    valueListenable: FavoritesService.favoritesNotifier,
-                    builder: (context, _, __) {
-                      final isFav = FavoritesService.isFavorite(
+                    tooltip: isFav
+                        ? 'حذف از مسیرهای برگزیده'
+                        : 'افزودن به مسیرهای برگزیده',
+                    onPressed: () {
+                      FavoritesService.toggleFavorite(
                           mabda.text, maghsad.text);
-                      return IconButton(
-                        icon: Icon(
-                          isFav
-                              ? Icons.star_rounded
-                              : Icons.star_outline_rounded,
-                          color: isFav ? Colors.amber : Colors.white,
-                          size: 26,
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(isFav
+                              ? 'از مسیرهای برگزیده حذف شد'
+                              : 'به مسیرهای برگزیده افزوده شد'),
+                          duration: const Duration(seconds: 1),
                         ),
-                        tooltip: isFav
-                            ? 'حذف از مسیرهای برگزیده'
-                            : 'افزودن به مسیرهای برگزیده',
-                        onPressed: () {
-                          FavoritesService.toggleFavorite(
-                              mabda.text, maghsad.text);
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            SnackBar(
-                              content: Text(isFav
-                                  ? 'از مسیرهای برگزیده حذف شد'
-                                  : 'به مسیرهای برگزیده افزوده شد'),
-                              duration: const Duration(seconds: 1),
-                            ),
-                          );
-                        },
                       );
                     },
-                  ),
-                ],
+                  );
+                },
               ),
-            ),
+            ],
           ),
         ),
         Expanded(
@@ -1099,46 +1232,48 @@ class _MyHomePageState extends State<MyHomePage> {
                 lineText = '${step.from!.name} ← ${step.to!.name}';
               }
 
-              return Card(
-                elevation: 6,
+              return Container(
+                margin: const EdgeInsets.symmetric(vertical: 3),
+                decoration: BoxDecoration(
+                  color: AppColors.surface,
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: AppColors.cardBorder),
+                ),
                 child: Padding(
                   padding:
-                      const EdgeInsets.symmetric(vertical: 8, horizontal: 1),
-                  child: Directionality(
-                    textDirection: TextDirection.rtl,
-                    child: ListTile(
-                      leading: !step.tavizkhat
-                          ? CircleAvatar(
-                              backgroundColor: getColorByKhat(step.khat2!),
-                              child: Text(
-                                step.min.toString(),
-                                style: const TextStyle(color: Colors.white),
-                              ),
-                            )
-                          : Container(
-                              decoration: BoxDecoration(
-                                shape: BoxShape.circle,
-                                gradient: LinearGradient(
-                                  colors: [
-                                    getColorByKhat(step.khat1!),
-                                    getColorByKhat(step.khat1!),
-                                    getColorByKhat(step.khat2!),
-                                  ],
-                                  begin: Alignment.centerRight,
-                                  end: Alignment.centerLeft,
-                                  stops: const [0.0, 0.5, 0.5],
-                                ),
-                              ),
-                              child: CircleAvatar(
-                                backgroundColor: Colors.transparent,
-                                child: Text(
-                                  step.min.toString(),
-                                  style: const TextStyle(color: Colors.white),
-                                ),
+                      const EdgeInsets.symmetric(vertical: 4, horizontal: 2),
+                  child: ListTile(
+                    leading: !step.tavizkhat
+                        ? CircleAvatar(
+                            backgroundColor: getColorByKhat(step.khat2!),
+                            child: Text(
+                              step.min.toString(),
+                              style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                            ),
+                          )
+                        : Container(
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              gradient: LinearGradient(
+                                colors: [
+                                  getColorByKhat(step.khat1!),
+                                  getColorByKhat(step.khat1!),
+                                  getColorByKhat(step.khat2!),
+                                ],
+                                begin: Alignment.centerRight,
+                                end: Alignment.centerLeft,
+                                stops: const [0.0, 0.5, 0.5],
                               ),
                             ),
-                      title: Text(lineText),
-                    ),
+                            child: CircleAvatar(
+                              backgroundColor: Colors.transparent,
+                              child: Text(
+                                step.min.toString(),
+                                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.bold),
+                              ),
+                            ),
+                          ),
+                    title: Text(lineText, style: const TextStyle(fontSize: 13, color: AppColors.textPrimary)),
                   ),
                 ),
               );

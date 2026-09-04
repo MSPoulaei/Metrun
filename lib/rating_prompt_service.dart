@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'app_theme.dart';
 
 /// Service to politely prompt satisfied users to rate the app on the installed store
 class RatingPromptService {
@@ -84,32 +85,34 @@ class RatingPromptService {
                   height: 4,
                   margin: const EdgeInsets.only(bottom: 12),
                   decoration: BoxDecoration(
-                    color: Colors.grey.shade300,
+                    color: AppColors.cardBorder,
                     borderRadius: BorderRadius.circular(2),
                   ),
                 ),
-                Icon(Icons.star_rounded, color: Colors.amber.shade600, size: 48),
+                const Icon(Icons.star_rounded, color: AppColors.favoriteStar, size: 48),
                 const SizedBox(height: 8),
                 const Text(
                   'آیا از متران راضی هستید؟',
-                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                 ),
                 const SizedBox(height: 6),
-                Text(
+                const Text(
                   'نظر و امتیاز شما به توسعه و به‌روزرسانی مداوم خطوط و امکانات برنامه کمک می‌کند.',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 13, color: Colors.grey.shade700),
+                  style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
                 ),
                 const SizedBox(height: 16),
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton.icon(
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.orange.shade700,
+                      backgroundColor: AppColors.primary,
                       foregroundColor: Colors.white,
+                      elevation: 2,
+                      shadowColor: const Color(0x35E65100),
                       padding: const EdgeInsets.symmetric(vertical: 12),
                       shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
+                        borderRadius: BorderRadius.circular(14),
                       ),
                     ),
                     icon: const Icon(Icons.star_rounded, size: 20),
@@ -126,8 +129,8 @@ class RatingPromptService {
                 const SizedBox(height: 8),
                 TextButton(
                   onPressed: () => Navigator.pop(ctx),
-                  child: Text('بعداً یادآوری کن',
-                      style: TextStyle(color: Colors.grey.shade600, fontSize: 12)),
+                  child: const Text('بعداً یادآوری کن',
+                      style: TextStyle(color: AppColors.textSecondary, fontSize: 12)),
                 ),
               ],
             ),
