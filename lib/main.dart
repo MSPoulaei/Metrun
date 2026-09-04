@@ -879,7 +879,7 @@ class _MyHomePageState extends State<MyHomePage> {
                           runSpacing: 4,
                           children: [
                             Directionality(
-                              textDirection: TextDirection.ltr,
+                              textDirection: TextDirection.rtl,
                               child: Row(
                                 mainAxisSize: MainAxisSize.min,
                                 children: [
@@ -897,7 +897,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   const Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 4),
                                     child: Icon(
-                                      Icons.arrow_forward,
+                                      Icons.arrow_back_rounded,
                                       color: Colors.white,
                                       size: 16,
                                     ),
