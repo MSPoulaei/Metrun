@@ -1,7 +1,9 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:masiryab_metro/favorites_service.dart';
 import 'package:masiryab_metro/persian_number_utility.dart';
 import 'package:masiryab_metro/update_checker_service.dart';
+import 'package:masiryab_metro/widget/auto_complete.dart';
 
 void main() {
   TestWidgetsFlutterBinding.ensureInitialized();
@@ -38,6 +40,40 @@ void main() {
       final json = fav1.toJson();
       final fromJson = FavoriteTrip.fromJson(json);
       expect(fromJson, equals(fav1));
+    });
+  });
+
+  group('AutocompleteBasic Persian Search', () {
+    testWidgets('typing ا, ازادی, or آزادی finds میدان آزادی', (tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: AutocompleteBasic(
+              options: const {'میدان آزادی', 'تجریش', 'شهدای هفتم تیر', 'آزادگان'},
+              assign: (_) {},
+              select: () {},
+              label: 'مبدا',
+            ),
+          ),
+        ),
+      );
+
+      // Type plain 'ا'
+      await tester.enterText(find.byType(TextField), 'ا');
+      await tester.pumpAndSettle();
+      expect(find.text('میدان آزادی'), findsOneWidget);
+      expect(find.text('آزادگان'), findsOneWidget);
+
+      // Type 'ازادی' without hat
+      await tester.enterText(find.byType(TextField), 'ازادی');
+      await tester.pumpAndSettle();
+      expect(find.text('میدان آزادی'), findsOneWidget);
+      expect(find.text('آزادگان'), findsNothing);
+
+      // Type 'آزادی' with hat
+      await tester.enterText(find.byType(TextField), 'آزادی');
+      await tester.pumpAndSettle();
+      expect(find.text('میدان آزادی'), findsOneWidget);
     });
   });
 }

@@ -35,15 +35,25 @@ class OnlineRoute {
   final String title;
   final List<RouteStep> steps;
   final List<String> instructions;
+  final bool isOffline;
+  final int? totalMinutes;
 
   const OnlineRoute({
     required this.title,
     this.steps = const [],
     this.instructions = const [],
+    this.isOffline = false,
+    this.totalMinutes,
   });
 
-  String? get departTime => steps.isEmpty ? null : steps.first.time;
-  String? get arriveTime => steps.isEmpty ? null : steps.last.time;
+  String? get departTime =>
+      steps.isEmpty || isOffline || steps.first.time.trim().isEmpty
+          ? null
+          : steps.first.time;
+  String? get arriveTime =>
+      steps.isEmpty || isOffline || steps.last.time.trim().isEmpty
+          ? null
+          : steps.last.time;
   int get stationCount => steps.length;
 
   List<int> get lines {

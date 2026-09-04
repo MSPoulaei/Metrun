@@ -119,7 +119,7 @@ class AdConfig {
           .get(Uri.parse(targetUrl))
           .timeout(const Duration(seconds: 3));
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 200 && response.body.trim().isNotEmpty) {
         final Map<String, dynamic> data = jsonDecode(response.body);
         if (data['app_key'] is String &&
             (data['app_key'] as String).isNotEmpty) {

@@ -27,7 +27,9 @@ class RatingPromptService {
       Map<String, dynamic> state = {};
       if (await file.exists()) {
         final contents = await file.readAsString();
-        state = jsonDecode(contents) as Map<String, dynamic>;
+        if (contents.trim().isNotEmpty) {
+          state = jsonDecode(contents) as Map<String, dynamic>;
+        }
       }
 
       final bool hasRated = state['has_rated'] == true;
@@ -49,7 +51,10 @@ class RatingPromptService {
       final file = await _getFile();
       Map<String, dynamic> state = {};
       if (await file.exists()) {
-        state = jsonDecode(await file.readAsString()) as Map<String, dynamic>;
+        final str = await file.readAsString();
+        if (str.trim().isNotEmpty) {
+          state = jsonDecode(str) as Map<String, dynamic>;
+        }
       }
       state['has_rated'] = true;
       await file.writeAsString(jsonEncode(state));

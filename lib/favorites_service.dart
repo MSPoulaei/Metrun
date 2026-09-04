@@ -57,6 +57,10 @@ class FavoritesService {
         return [];
       }
       final contents = await file.readAsString();
+      if (contents.trim().isEmpty) {
+        favoritesNotifier.value = [];
+        return [];
+      }
       final List<dynamic> list = jsonDecode(contents);
       final favs = list
           .map((e) => FavoriteTrip.fromJson(e as Map<String, dynamic>))

@@ -57,6 +57,10 @@ class RecentTripsService {
         return [];
       }
       final contents = await file.readAsString();
+      if (contents.trim().isEmpty) {
+        tripsNotifier.value = [];
+        return [];
+      }
       final List<dynamic> list = jsonDecode(contents);
       final trips = list
           .map((e) => TripRecord.fromJson(e as Map<String, dynamic>))

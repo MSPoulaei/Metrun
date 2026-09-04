@@ -29,7 +29,7 @@ const Map<int, String> dayTypesFallback = {
 final RegExp _stepRe = RegExp(
   r"<a class='line_(\d+)'>.*?"
   r"<div class='stepNumberText'>(\d+)</div>.*?"
-  r"<span class='stepDesc'[^>]*>\s*([\d:]+)<br><small>([^<]+)</small>",
+  r"<span class='stepDesc'[^>]*>\s*([^<]*?)\s*<br><small>([^<]+)</small>",
   dotAll: true,
 );
 
@@ -361,6 +361,7 @@ List<OnlineRoute> parseRoutes(String resultHtml) {
       instructions: i < helps.length ? helps[i] : const [],
     ));
   }
+
   return routes;
 }
 

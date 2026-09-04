@@ -1,6 +1,7 @@
 import 'istgah_reader.dart';
 import 'masiryab.dart';
 import 'online/client.dart';
+import 'online/line_mapper.dart';
 import 'online/matching.dart';
 import 'online/models.dart';
 import 'online/timeutil.dart';
@@ -216,11 +217,73 @@ class RouteService {
     );
 
     final routes = await client.findRoute(query);
+
+    final validRoutes = <OnlineRoute>[];
+    bool hadBrokenRoute = false;
+
+    for (final r in routes) {
+      if (_isRouteValid(r, toMatch.station!.name)) {
+        validRoutes.add(r);
+      } else {
+        hadBrokenRoute = true;
+      }
+    }
+
+    List<OnlineRoute> finalOnlineRoutes = [];
+    List<Stepp>? offlineSteps;
+
+    if (hadBrokenRoute) {
+      // One of the online routes was broken -> discard it,
+      // keep valid online route(s) (such as مسافت) 1st,
+      // and place offline result as 2nd!
+      try {
+        offlineSteps = await _findOffline(fromName, toName);
+        if (offlineSteps.isNotEmpty) {
+          final offlineRoute = convertOfflineStepsToOnlineRoute(offlineSteps);
+          finalOnlineRoutes = [...validRoutes, offlineRoute];
+        } else {
+          finalOnlineRoutes = validRoutes;
+        }
+      } catch (_) {
+        finalOnlineRoutes = validRoutes;
+      }
+    } else {
+      // Both routes are healthy (or single route returned).
+      // Sort so that the route with the LOWER count of line transfers (تعویض خط) is 1st!
+      validRoutes.sort((a, b) {
+        final countA = getRouteTransferCount(a);
+        final countB = getRouteTransferCount(b);
+        if (countA != countB) {
+          return countA.compareTo(countB); // Lower count of transfers first!
+        }
+        return a.stationCount.compareTo(b.stationCount);
+      });
+      finalOnlineRoutes = validRoutes;
+    }
+
+    // Rule D: None of the online results exist/valid -> show offline result
+    if (finalOnlineRoutes.isEmpty) {
+      final offline = offlineSteps ?? await _findOffline(fromName, toName);
+      return RouteResult(
+        source: RouteSource.offline,
+        originName: fromMatch.station!.name,
+        destinationName: toMatch.station!.name,
+        offlineSteps: offline,
+        fellBack: true,
+        notice: 'مسیر آنلاین معتبر یافت نشد — مسیر آفلاین',
+        dayType: day,
+        hour: h,
+        minute: m,
+        scheduleType: scheduleType,
+      );
+    }
+
     return RouteResult(
       source: RouteSource.online,
       originName: fromMatch.station!.name,
       destinationName: toMatch.station!.name,
-      onlineRoutes: routes,
+      onlineRoutes: finalOnlineRoutes,
+      offlineSteps: offlineSteps,
       dayType: day,
       hour: h,
       minute: m,
@@ -268,4 +331,143 @@ class RouteService {
   void dispose() {
     _client?.dispose();
   }
+}
+
+bool _isDestinationMatch(String lastStation, String destination) {
+  String norm(String s) {
+    return s
+        .replaceAll(RegExp(r'[آأإٱ]'), 'ا')
+        .replaceAll(RegExp(r'[يىئ]'), 'ی')
+        .replaceAll('ك', 'ک')
+        .replaceAll('ة', 'ه')
+        .replaceAll(RegExp(r'[\u200c\u200d\(\)\[\]\-–—،,._]'), ' ')
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .replaceAll(RegExp(r'(ایستگاه|مترو)'), '')
+        .trim();
+  }
+  final s1 = norm(lastStation);
+  final s2 = norm(destination);
+  return s1 == s2 || s1.contains(s2) || s2.contains(s1);
+}
+
+bool _isRouteValid(OnlineRoute r, String expectedDest) {
+  if (r.steps.length < 2) return false;
+  if (!_isDestinationMatch(r.steps.last.station, expectedDest)) return false;
+  if (!_hasValidTimes(r)) return false;
+  if (!_hasContinuousOrders(r)) return false;
+  return true;
+}
+
+bool _hasContinuousOrders(OnlineRoute r) {
+  if (r.steps.isEmpty) return false;
+  for (var i = 0; i < r.steps.length; i++) {
+    if (r.steps[i].order != i + 1) {
+      return false;
+    }
+  }
+  return true;
+}
+
+bool _hasValidTimes(OnlineRoute r) {
+  if (r.steps.isEmpty) return false;
+  for (final step in r.steps) {
+    final t = step.time.trim();
+    if (t.isEmpty || t == '-' || t == '--' || t == '---' || !RegExp(r'\d').hasMatch(t)) {
+      return false;
+    }
+  }
+  return true;
+}
+
+int getRouteTransferCount(OnlineRoute r) {
+  if (r.steps.isEmpty) return 0;
+  final lines = <int>[];
+  for (final step in r.steps) {
+    final rl = cssLineToMetroLine(step.line);
+    if (lines.isEmpty || lines.last != rl) {
+      lines.add(rl);
+    }
+  }
+  return (lines.length - 1).clamp(0, 999);
+}
+
+OnlineRoute convertOfflineStepsToOnlineRoute(List<Stepp> steps) {
+  if (steps.isEmpty) {
+    return const OnlineRoute(
+      title: 'بهترین مسیر بر اساس تعویض خطوط (آفلاین)',
+      isOffline: true,
+      totalMinutes: 0,
+    );
+  }
+
+  final routeSteps = <RouteStep>[];
+  final instructions = <String>[];
+  var accumulatedMinutes = 0;
+  var order = 1;
+
+  int metroLineToCss(int line) {
+    switch (line) {
+      case 1:
+        return 1;
+      case 2:
+        return 4;
+      case 3:
+        return 5;
+      case 4:
+        return 6;
+      case 5:
+        return 7;
+      case 6:
+        return 8;
+      case 7:
+        return 9;
+      case 8:
+        return 10;
+      default:
+        return line;
+    }
+  }
+
+  if (steps.length > 1 && steps[1].from != null) {
+    final first = steps[1];
+    final line = first.khat2 ?? 1;
+    routeSteps.add(RouteStep(
+      order: order++,
+      line: metroLineToCss(line),
+      time: '',
+      station: first.from!.name,
+    ));
+    instructions.add('سوار قطار خط $line در ایستگاه ${first.from!.name} شوید.');
+  }
+
+  for (var i = 1; i < steps.length; i++) {
+    final step = steps[i];
+    accumulatedMinutes += step.min;
+
+    if (step.tavizkhat) {
+      final k1 = step.khat1 ?? 1;
+      final k2 = step.khat2 ?? 1;
+      instructions.add('در ایستگاه ${step.from!.name} از خط $k1 به خط $k2 تعویض خط انجام دهید.');
+    } else if (step.to != null) {
+      final line = step.khat2 ?? 1;
+      routeSteps.add(RouteStep(
+        order: order++,
+        line: metroLineToCss(line),
+        time: '',
+        station: step.to!.name,
+      ));
+    }
+  }
+
+  if (routeSteps.isNotEmpty) {
+    instructions.add('در ایستگاه ${routeSteps.last.station} از قطار پیاده شوید.');
+  }
+
+  return OnlineRoute(
+    title: 'بهترین مسیر بر اساس تعویض خطوط (آفلاین)',
+    steps: routeSteps,
+    instructions: instructions,
+    isOffline: true,
+    totalMinutes: accumulatedMinutes,
+  );
 }

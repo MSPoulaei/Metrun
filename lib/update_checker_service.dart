@@ -83,13 +83,15 @@ class UpdateCheckerService {
         final file = await _getFile();
         if (await file.exists()) {
           final content = await file.readAsString();
-          final data = jsonDecode(content) as Map<String, dynamic>;
-          final lastPromptMillis = data['last_prompt_millis'] as int?;
-          if (lastPromptMillis != null) {
-            final lastPrompt =
-                DateTime.fromMillisecondsSinceEpoch(lastPromptMillis);
-            if (DateTime.now().difference(lastPrompt) < cooldownDuration) {
-              return; // Still in 3-day cooldown
+          if (content.trim().isNotEmpty) {
+            final data = jsonDecode(content) as Map<String, dynamic>;
+            final lastPromptMillis = data['last_prompt_millis'] as int?;
+            if (lastPromptMillis != null) {
+              final lastPrompt =
+                  DateTime.fromMillisecondsSinceEpoch(lastPromptMillis);
+              if (DateTime.now().difference(lastPrompt) < cooldownDuration) {
+                return; // Still in 3-day cooldown
+              }
             }
           }
         }

@@ -905,8 +905,7 @@ class _MyHomePageState extends State<MyHomePage> {
         return Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            if (route.departTime != null && route.arriveTime != null)
-              Container(
+            Container(
                 margin: const EdgeInsets.only(bottom: 8),
                 decoration: BoxDecoration(
                   borderRadius: BorderRadius.circular(16),
@@ -989,6 +988,7 @@ class _MyHomePageState extends State<MyHomePage> {
                         spacing: 8,
                         runSpacing: 4,
                         children: [
+                          if (route.departTime != null && route.arriveTime != null)
                           Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
@@ -1017,6 +1017,15 @@ class _MyHomePageState extends State<MyHomePage> {
                                 ),
                               ),
                             ],
+                          )
+                        else if (route.totalMinutes != null && route.totalMinutes! > 0)
+                          Text(
+                            'مدت تقریبی: ${route.totalMinutes} دقیقه'.toPersianDigits(),
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 13,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                           Text(
                             ('(${route.stationCount} ایستگاه'
@@ -1064,7 +1073,12 @@ class _MyHomePageState extends State<MyHomePage> {
                   subtitle: transfer
                       ? Row(
                           children: [
-                            Text('${step.time}  •  خط $realLine', style: const TextStyle(fontSize: 12, color: AppColors.textSecondary)),
+                            Text(
+                              step.time.isNotEmpty
+                                  ? '${step.time}  •  خط $realLine'
+                                  : 'خط $realLine',
+                              style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
+                            ),
                             const SizedBox(width: 8),
                             Container(
                               padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
@@ -1078,7 +1092,9 @@ class _MyHomePageState extends State<MyHomePage> {
                           ],
                         )
                       : Text(
-                          '${step.time}  •  خط $realLine',
+                          step.time.isNotEmpty
+                              ? '${step.time}  •  خط $realLine'
+                              : 'خط $realLine',
                           style: const TextStyle(fontSize: 12, color: AppColors.textSecondary),
                         ),
                   trailing: Container(
