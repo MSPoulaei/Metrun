@@ -897,7 +897,7 @@ class _MyHomePageState extends State<MyHomePage> {
                                   const Padding(
                                     padding: EdgeInsets.symmetric(horizontal: 4),
                                     child: Icon(
-                                      Icons.arrow_back_rounded,
+                                      Icons.arrow_forward,
                                       color: Colors.white,
                                       size: 16,
                                     ),
